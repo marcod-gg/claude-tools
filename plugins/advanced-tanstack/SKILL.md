@@ -236,3 +236,4 @@ grupo tiene registros. Error frecuente: escrituras que solo piden la política d
 | `assets/default-theme/theme-tokens.css`, `head.html` | Tema por defecto de la skill: tokens `--dt-*` claro/oscuro/daltonismo/alto contraste, también por elemento con `.dt-thp`, y script del `<head>` |
 | `assets/dataviews-tokens.css` | Alias `--c-*` → `--dt-*` para el tema por defecto (default-theme) |
 | `references/config.md` | Build, props, `ViewConfig`, filtros, TanStack, vistas, descarga, estilos, a11y, tests |
+| `examples/demo/` | Ejemplo completo aplicado desde cero (solo lectura, tema por defecto): `demo.html` armado, su `main.tsx` y `build.py` |
