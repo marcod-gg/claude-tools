@@ -1,0 +1,253 @@
+/* ============================================================================
+   default-theme · Tokens de tema del "tema por defecto" de advanced-tanstack
+   <html data-theme="light|dark" data-vision="default|colorblind|tritanopia"
+         data-contrast="default|high" data-font="roboto|atkinson|lexend|system">
+   Lo fija el script del <head> (default-theme/head.html) desde localStorage.
+   .dt-thp = tema aplicado a un elemento y no a la página: vista previa (página de Accesibilidad) o un espacio de
+   trabajo con tema propio (DataViews). Lleva data-theme, data-vision y data-contrast en el mismo elemento.
+   Cargar DESPUÉS de Bootstrap u otros frameworks para ganar la cascada.
+
+   Tokens:
+     Neutros   --dt-bg --dt-surface --dt-surface-2 --dt-border --dt-border-strong
+               --dt-text --dt-text-body --dt-text-muted --dt-text-faint
+     Marca     --dt-brand (texto/íconos/bordes de acento, ≥4.5:1)
+               --dt-brand-emphasis (fondos rellenos con texto blanco, ≥4.5:1)
+               --dt-brand-strong (hover/degradados) --dt-brand-subtle (tintes) --dt-brand-ghost
+               --dt-accent (dorado) --dt-accent-2 (coral) → SOLO decorativos, nunca texto
+               --dt-logo-bg (cuadro del logo, siempre el azul de marca) --dt-focus-ring
+     Semánt.   --dt-success --dt-warning --dt-danger --dt-info (+ -bg)
+     Estados   --dt-state-new --dt-state-active --dt-state-waiting --dt-state-pending
+               --dt-state-done --dt-state-canceled --dt-state-extra (+ -bg)
+     Fuente    --dt-font (+ --dt-font-mono para IDs, códigos y etiquetas técnicas)
+     Forma     --dt-r-xs … --dt-r-xl --dt-r-pill · --dt-shadow-xs … --dt-shadow-lg · --dt-ease --dt-t
+   ============================================================================ */
+
+:root {
+    --dt-font: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --dt-font-mono: 'Roboto Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+    /* Radios, sombras y movimiento */
+    --dt-r-xs: 6px; --dt-r-sm: 8px; --dt-r-md: 10px; --dt-r-lg: 14px; --dt-r-xl: 18px; --dt-r-pill: 999px;
+    --dt-shadow-xs: 0 1px 2px rgba(16, 24, 40, .05);
+    --dt-shadow-sm: 0 1px 3px rgba(16, 24, 40, .07), 0 1px 2px rgba(16, 24, 40, .04);
+    --dt-shadow-md: 0 4px 12px rgba(16, 24, 40, .08), 0 2px 4px rgba(16, 24, 40, .04);
+    --dt-shadow-lg: 0 12px 32px rgba(16, 24, 40, .12), 0 4px 8px rgba(16, 24, 40, .05);
+    --dt-ease: cubic-bezier(.4, 0, .2, 1);
+    --dt-t: .18s var(--dt-ease);
+}
+/* Movimiento reducido: sin transiciones ni desplazamientos para quien lo pide en el sistema */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}
+body { font-family: var(--dt-font); background: var(--dt-bg); color: var(--dt-text-body); }
+
+/* Transición SOLO durante el cambio de tema (la activa el script del <head> ~520 ms; no interfiere con hovers).
+   Listas enormes (tableros, grillas de cientos de filas): marcarlas con .dt-no-theme-anim para evitar lag. */
+@media (prefers-reduced-motion: no-preference) {
+    html.theme-anim body, html.theme-anim *:not(i):not(svg):not(path) {
+        transition: background-color .4s ease, border-color .4s ease, color .4s ease !important;
+    }
+}
+html.theme-anim .dt-no-theme-anim, html.theme-anim .dt-no-theme-anim * { transition: none !important; }
+
+/* ── Claro (GitHub light default) ── */
+:root, .dt-thp[data-theme="light"] {
+    color-scheme: light;
+    /* Marca: emphasis #002F5D = azul de marca para fondos con texto blanco; brand #3A57E8 = enlaces y acentos (5.7:1);
+       light #D9EBFA = celeste para tintes; accent dorado y accent-2 coral = solo decorativos (no texto). */
+    --dt-brand: #3a57e8; --dt-brand-emphasis: #002f5d; --dt-brand-strong: #1a3b66; --dt-brand-subtle: #d9ebfa; --dt-brand-ghost: rgba(58, 87, 232, .08);
+    --dt-accent: #d6a419; --dt-accent-2: #e97f7f; --dt-logo-bg: #002f5d;
+    --dt-bg: #eef1f5; --dt-surface: #ffffff; --dt-surface-2: #f5f7fa; --dt-border: #d5dde6; --dt-border-strong: #b5c0cc;
+    --dt-text: #0b1c2e; --dt-text-body: #26323f; --dt-text-muted: #48545f; --dt-text-faint: #6b7a88;
+    --dt-focus-ring: 0 0 0 3px rgba(58, 87, 232, .3);
+
+    /* Semánticos y estados (visión estándar) */
+    --dt-success: #1a7f37; --dt-success-bg: #dafbe1;
+    --dt-warning: #9a6700; --dt-warning-bg: #fff8c5;
+    --dt-danger: #d1242f;  --dt-danger-bg: #ffebe9;
+    --dt-info: #3a57e8;    --dt-info-bg: #d9ebfa;
+    --dt-state-new: #d1242f;     --dt-state-new-bg: #ffebe9;
+    --dt-state-active: #bc4c00;     --dt-state-active-bg: #fff1e5;
+    --dt-state-waiting: #9a6700;    --dt-state-waiting-bg: #fff8c5;
+    --dt-state-pending: #0969da; --dt-state-pending-bg: #ddf4ff;
+    --dt-state-done: #1a7f37;  --dt-state-done-bg: #dafbe1;
+    --dt-state-canceled: #48545f; --dt-state-canceled-bg: #f5f7fa;
+    --dt-state-extra: #8250df;     --dt-state-extra-bg: #fbefff;
+}
+
+/* ── Oscuro (GitHub dark default) ── */
+:root[data-theme="dark"], .dt-thp[data-theme="dark"] {
+    color-scheme: dark;
+    /* Fondo marino (#0B1C2E) en vez del casi negro de GitHub; acento lavanda
+       (#7B97EA para texto, 5.6:1; #3A57E8 para fondos con texto blanco, 5.7:1). */
+    --dt-brand: #7b97ea; --dt-brand-emphasis: #3a57e8; --dt-brand-strong: #a9bcf3; --dt-brand-subtle: #1a3257; --dt-brand-ghost: rgba(90, 125, 225, .16);
+    --dt-accent: #e0b43a; --dt-accent-2: #e97f7f; --dt-logo-bg: #1a3b66;
+    --dt-bg: #0b1c2e; --dt-surface: #10243a; --dt-surface-2: #081624; --dt-border: #1f3a58; --dt-border-strong: #2b4a6d;
+    --dt-text: #eef3f9; --dt-text-body: #cdd7e3; --dt-text-muted: #9aabbf; --dt-text-faint: #7f92a8;
+    --dt-focus-ring: 0 0 0 3px rgba(123, 151, 234, .4);
+
+    --dt-success: #3fb950; --dt-success-bg: #183c3e;
+    --dt-warning: #d29922; --dt-warning-bg: #2f3736;
+    --dt-danger: #f85149;  --dt-danger-bg: #352b3c;
+    --dt-info: #7b97ea;    --dt-info-bg: #1a3257;
+    --dt-state-new: #f85149;     --dt-state-new-bg: #352b3c;
+    --dt-state-active: #db6d28;     --dt-state-active-bg: #303037;
+    --dt-state-waiting: #d29922;    --dt-state-waiting-bg: #2f3736;
+    --dt-state-pending: #4493f8; --dt-state-pending-bg: #183658;
+    --dt-state-done: #3fb950;  --dt-state-done-bg: #183c3e;
+    --dt-state-canceled: #9aabbf; --dt-state-canceled-bg: #16304b;
+    --dt-state-extra: #ab7df8;     --dt-state-extra-bg: #293258;
+}
+
+/* ── Daltonismo ──
+   Semánticos como GitHub: protanopía/deuteranopía → éxito azul y peligro naranjo (sin pares rojo/verde);
+   tritanopía → éxito azul y peligro rojo (sin pares azul/amarillo).
+   Estados de ticket: paleta optimizada simulando protanopía, deuteranopía y tritanopía (Machado 2009): separación mínima
+   ΔE ≥ 20 (claro) / ≥ 25 (oscuro) entre estados en los cuatro tipos de visión, contraste ≥ 4.5:1 sobre la superficie y cada
+   estado en una familia de tono fija. Siempre van acompañados de nombre o icono (no solo color). */
+:root[data-vision="colorblind"], .dt-thp[data-vision="colorblind"] {
+    --dt-success: #0969da; --dt-success-bg: #ddf4ff;
+    --dt-warning: #9a6700; --dt-warning-bg: #fff8c5;
+    --dt-danger: #bc4c00;  --dt-danger-bg: #fff1e5;
+    --dt-state-new: #9f3523;     --dt-state-new-bg: #f5ebe9;
+    --dt-state-active: #c120a5;     --dt-state-active-bg: #f9e9f6;
+    --dt-state-waiting: #a86803;    --dt-state-waiting-bg: #f6f0e6;
+    --dt-state-pending: #254bf9; --dt-state-pending-bg: #e9edfe;
+    --dt-state-done: #02845a;  --dt-state-done-bg: #e6f3ee;
+    --dt-state-extra: #a444da;     --dt-state-extra-bg: #f6ecfb;
+}
+:root[data-theme="dark"][data-vision="colorblind"], .dt-thp[data-theme="dark"][data-vision="colorblind"] {
+    --dt-success: #58a6ff; --dt-success-bg: #1c395a;
+    --dt-warning: #d29922; --dt-warning-bg: #2f3736;
+    --dt-danger: #db6d28;  --dt-danger-bg: #303037;
+    --dt-state-new: #fd6462;     --dt-state-new-bg: #362e40;
+    --dt-state-active: #db52ca;     --dt-state-active-bg: #302b51;
+    --dt-state-waiting: #b49d0b;    --dt-state-waiting-bg: #2a3732;
+    --dt-state-pending: #b5dbf9; --dt-state-pending-bg: #2a4159;
+    --dt-state-done: #09f1b9;  --dt-state-done-bg: #0f454e;
+    --dt-state-extra: #c76afc;     --dt-state-extra-bg: #2c2b59;
+}
+:root[data-vision="tritanopia"], .dt-thp[data-vision="tritanopia"] {
+    --dt-success: #0969da; --dt-success-bg: #ddf4ff;
+    --dt-warning: #bc4c00; --dt-warning-bg: #fff1e5;
+    --dt-danger: #d1242f;  --dt-danger-bg: #ffebe9;
+    --dt-state-new: #9f3523;     --dt-state-new-bg: #f5ebe9;
+    --dt-state-active: #c120a5;     --dt-state-active-bg: #f9e9f6;
+    --dt-state-waiting: #a86803;    --dt-state-waiting-bg: #f6f0e6;
+    --dt-state-pending: #254bf9; --dt-state-pending-bg: #e9edfe;
+    --dt-state-done: #02845a;  --dt-state-done-bg: #e6f3ee;
+    --dt-state-extra: #a444da;     --dt-state-extra-bg: #f6ecfb;
+}
+:root[data-theme="dark"][data-vision="tritanopia"], .dt-thp[data-theme="dark"][data-vision="tritanopia"] {
+    --dt-success: #58a6ff; --dt-success-bg: #1c395a;
+    --dt-warning: #db6d28; --dt-warning-bg: #303037;
+    --dt-danger: #f85149;  --dt-danger-bg: #352b3c;
+    --dt-state-new: #fd6462;     --dt-state-new-bg: #362e40;
+    --dt-state-active: #db52ca;     --dt-state-active-bg: #302b51;
+    --dt-state-waiting: #b49d0b;    --dt-state-waiting-bg: #2a3732;
+    --dt-state-pending: #b5dbf9; --dt-state-pending-bg: #2a4159;
+    --dt-state-done: #09f1b9;  --dt-state-done-bg: #0f454e;
+    --dt-state-extra: #c76afc;     --dt-state-extra-bg: #2c2b59;
+}
+
+/* ── Alto contraste (data-contrast="high"), como los temas "high contrast" de GitHub ──
+   Neutros, marca y bordes a ≥ 7:1 (AAA) sobre la superficie; se combina con claro/oscuro y con daltonismo. */
+:root[data-theme="light"][data-contrast="high"], .dt-thp[data-theme="light"][data-contrast="high"] {
+    --dt-bg: #ffffff; --dt-surface: #ffffff; --dt-surface-2: #e8edf3; --dt-border: #59636e; --dt-border-strong: #20252c;
+    --dt-text: #0b1c2e; --dt-text-body: #0b1c2e; --dt-text-muted: #26323f; --dt-text-faint: #48545f;
+    --dt-brand: #1f3aa8; --dt-brand-emphasis: #002f5d; --dt-brand-strong: #002f5d; --dt-brand-subtle: #d9ebfa;
+    --dt-focus-ring: 0 0 0 3px #1f3aa8;
+    --dt-state-canceled: #26323f;
+}
+:root[data-theme="dark"][data-contrast="high"], .dt-thp[data-theme="dark"][data-contrast="high"] {
+    --dt-bg: #050d17; --dt-surface: #0b1c2e; --dt-surface-2: #000000; --dt-border: #8fa3bb; --dt-border-strong: #d6dee8;
+    --dt-text: #ffffff; --dt-text-body: #f0f4f9; --dt-text-muted: #d6dee8; --dt-text-faint: #aebdd0;
+    --dt-brand: #b4c6f7; --dt-brand-emphasis: #2a45c7; --dt-brand-strong: #d6e0fb; --dt-brand-subtle: #1a3257;
+    --dt-focus-ring: 0 0 0 3px #b4c6f7;
+    --dt-state-canceled: #d6dee8;
+}
+/* Estados y semánticos a ≥ 7:1: mismo tono de cada paleta (estándar/daltonismo), solo más oscuro (claro) o más claro (oscuro). */
+:root[data-theme="light"][data-contrast="high"][data-vision="default"], .dt-thp[data-theme="light"][data-contrast="high"][data-vision="default"] { /* mín. 7.3:1 */
+    --dt-state-new: #a71d26;
+    --dt-state-active: #933b00;
+    --dt-state-waiting: #754e00;
+    --dt-state-pending: #0754ae;
+    --dt-state-done: #14632b;
+    --dt-state-extra: #653eae;
+    --dt-success: #14632b;
+    --dt-warning: #754e00;
+    --dt-danger: #a71d26;
+    --dt-info: #1f3aa8;
+}
+:root[data-theme="light"][data-contrast="high"][data-vision="colorblind"], .dt-thp[data-theme="light"][data-contrast="high"][data-vision="colorblind"] { /* mín. 7.2:1 · ΔE ≥ 19 entre estados (optimize_states.py) */
+    --dt-state-new: #6f251d;
+    --dt-state-active: #95038a;
+    --dt-state-waiting: #774f06;
+    --dt-state-pending: #0724d9;
+    --dt-state-done: #176252;
+    --dt-state-extra: #6f1eaf;
+    --dt-success: #0754ae;
+    --dt-warning: #754e00;
+    --dt-danger: #933b00;
+    --dt-info: #1f3aa8;
+}
+:root[data-theme="light"][data-contrast="high"][data-vision="tritanopia"], .dt-thp[data-theme="light"][data-contrast="high"][data-vision="tritanopia"] { /* mín. 7.2:1 · ΔE ≥ 19 entre estados (optimize_states.py) */
+    --dt-state-new: #6f251d;
+    --dt-state-active: #95038a;
+    --dt-state-waiting: #774f06;
+    --dt-state-pending: #0724d9;
+    --dt-state-done: #176252;
+    --dt-state-extra: #6f1eaf;
+    --dt-success: #0754ae;
+    --dt-warning: #933b00;
+    --dt-danger: #a71d26;
+    --dt-info: #1f3aa8;
+}
+:root[data-theme="dark"][data-contrast="high"][data-vision="default"], .dt-thp[data-theme="dark"][data-contrast="high"][data-vision="default"] { /* mín. 7.2:1 */
+    --dt-state-new: #fa8983;
+    --dt-state-active: #e59664;
+    --dt-state-waiting: #d59f2f;
+    --dt-state-pending: #6dabfa;
+    --dt-state-done: #4ebf5e;
+    --dt-state-extra: #bc97f9;
+    --dt-success: #4ebf5e;
+    --dt-warning: #d59f2f;
+    --dt-danger: #fa8983;
+    --dt-info: #b4c6f7;
+}
+:root[data-theme="dark"][data-contrast="high"][data-vision="colorblind"], .dt-thp[data-theme="dark"][data-contrast="high"][data-vision="colorblind"] { /* mín. 7.2:1 */
+    --dt-state-new: #fd8685;
+    --dt-state-active: #e686da;
+    --dt-state-waiting: #bda928;
+    --dt-state-pending: #b5dbf9;
+    --dt-state-done: #09f1b9;
+    --dt-state-extra: #d38bfd;
+    --dt-success: #62abff;
+    --dt-warning: #d59f2f;
+    --dt-danger: #e59664;
+    --dt-info: #b4c6f7;
+}
+:root[data-theme="dark"][data-contrast="high"][data-vision="tritanopia"], .dt-thp[data-theme="dark"][data-contrast="high"][data-vision="tritanopia"] { /* mín. 7.2:1 */
+    --dt-state-new: #fd8685;
+    --dt-state-active: #e686da;
+    --dt-state-waiting: #bda928;
+    --dt-state-pending: #b5dbf9;
+    --dt-state-done: #09f1b9;
+    --dt-state-extra: #d38bfd;
+    --dt-success: #62abff;
+    --dt-warning: #e59664;
+    --dt-danger: #fa8983;
+    --dt-info: #b4c6f7;
+}
+
+:root[data-contrast="high"] :focus-visible, .dt-thp[data-contrast="high"] :focus-visible { outline: 3px solid var(--dt-brand) !important; outline-offset: 2px !important; }
+
+/* ── Fuente (data-font): Roboto por defecto; Atkinson Hyperlegible y Lexend se cargan desde Google Fonts
+   solo si se eligen (script del <head>). Se excluyen iconos (Font Awesome) y código. El tamaño se aplica como
+   font-size en <html> (la app usa rem). ── */
+:root[data-font="atkinson"] { --dt-font: 'Atkinson Hyperlegible', 'Segoe UI', sans-serif; }
+:root[data-font="lexend"]   { --dt-font: 'Lexend', 'Segoe UI', sans-serif; }
+:root[data-font="system"]   { --dt-font: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+:root[data-font]:not([data-font="roboto"]) body,
+:root[data-font]:not([data-font="roboto"]) body *:not(i):not(svg):not(svg *):not(code):not(pre):not(kbd):not(.fa):not(.fas):not(.far):not(.fab):not([class^="fa-"]):not([class*=" fa-"]):not([class*="dt-font-sample"]) {
+    font-family: var(--dt-font) !important;
+}

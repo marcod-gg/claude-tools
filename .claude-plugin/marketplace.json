@@ -1,0 +1,12 @@
+{
+  "name": "claude-tools",
+  "description": "Skills propias para Claude Code.",
+  "owner": { "name": "marcod-gg" },
+  "plugins": [
+    {
+      "name": "advanced-tanstack",
+      "source": "./plugins/advanced-tanstack",
+      "description": "Tablas de datos con TanStack Table: vistas tipo Notion, tabla, tablero y tarjetas."
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+/* Encabezado del tablero (título + herramientas) y herramientas junto al título: actualización · pantalla completa. */
+.board-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.board-head__title { margin: 0 0 4px; font-size: 1.5rem; color: var(--dt-text); }
+.board-head__sub { margin: 0; color: var(--dt-text-muted); }
+
+.board-tools {
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+    flex-wrap: wrap;
+}
+
+.board-tools__status {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    height: 2.25rem;
+    padding: 0 .5rem;
+    color: var(--dt-text-muted);
+    font-size: .8125rem;
+}
+
+.board-tools__rate {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    padding: 0 .5rem;
+    border: 0;
+    border-radius: var(--dt-r-sm);
+    background: none;
+    color: var(--dt-text-muted);
+    font: inherit;
+    font-size: .8125rem;
+    cursor: pointer;
+    transition: background-color var(--dt-t), color var(--dt-t);
+}
+
+.board-tools__rate:hover {
+    background: var(--dt-brand-ghost);
+    color: var(--dt-brand);
+}
+
+.board-tools__rate {
+    margin: 0;
+    padding-right: .25rem;
+}
+
+.board-tools__rate select {
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.board-tools__rate select option {
+    background: var(--dt-surface);
+    color: var(--dt-text);
+}
+
+/* Pantalla completa (monitor): título, actualización y los datos de la vista activa. */
+#board-screen:fullscreen {
+    max-width: none;
+    overflow: auto;
+    padding: 1rem 1.25rem;
+    background: var(--dt-bg);
+}
+
+#board-screen:fullscreen .board-head {
+    align-items: center;
+    margin-bottom: .75rem;
+}
+
+#board-screen:fullscreen .board-head__sub,
+#board-screen:fullscreen .dv-tabs,
+#board-screen:fullscreen .dv-toolbar > :not(.dv-tools),
+#board-screen:fullscreen .dv-tools > :not(:last-child),
+#board-screen:fullscreen .dv-notice,
+#board-screen:fullscreen .dv-foot {
+    display: none;
+}
+
+.conn-dot {
+    width: .6rem;
+    height: .6rem;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.conn-dot--online {
+    background: var(--dt-success);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--dt-success) 50%, transparent);
+    animation: pulse 1.6s infinite;
+}
+
+.conn-dot--offline {
+    background: var(--dt-danger);
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--dt-success) 50%, transparent); }
+    70% { box-shadow: 0 0 0 .5rem transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+}
+

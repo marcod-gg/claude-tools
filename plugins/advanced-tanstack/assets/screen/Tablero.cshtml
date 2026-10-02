@@ -1,0 +1,36 @@
+﻿@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Env
+@{
+    var v = System.IO.File.GetLastWriteTimeUtc(System.IO.Path.Combine(Env.WebRootPath, "dataviews", "dataviews.js")).Ticks;
+}
+<link href="~/dataviews/dataviews.css?v=@v" rel="stylesheet" />
+<style>html { scrollbar-gutter: stable; }</style>
+
+<div class="board-main" id="board-screen">
+    <div class="board-head">
+        <div>
+            <h1 class="board-head__title">@ViewData["Title"]</h1>
+            <p class="board-head__sub">@ViewData["Subtitle"]</p>
+        </div>
+        <div class="board-tools" role="toolbar" aria-label="Herramientas del tablero">
+            <span class="board-tools__status">
+                <span id="connection-indicator" class="conn-dot conn-dot--offline" aria-hidden="true"></span>
+                <span id="connection-label" aria-live="polite">Conectando…</span>
+            </span>
+            <label class="board-tools__rate" title="Actualizar cada">
+                <i class="fas fa-rotate" aria-hidden="true"></i>
+                <select id="sync-rate" aria-label="Actualizar cada">
+                    <option value="60000">1 min</option>
+                    <option value="300000">5 min</option>
+                    <option value="900000">15 min</option>
+                    <option value="1800000">30 min</option>
+                </select>
+            </label>
+        </div>
+    </div>
+    <div id="dataviews-root" data-board="@ViewData["Board"]" data-title="@ViewData["Title"]" data-user="@User.Identity?.Name"></div>
+</div>
+
+@section Scripts {
+    <script type="module" src="~/dataviews/dataviews.js?v=@v"></script>
+    <script src="~/js/board-header.js" asp-append-version="true"></script>
+}

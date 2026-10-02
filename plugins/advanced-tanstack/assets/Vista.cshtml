@@ -1,0 +1,15 @@
+﻿@* Vista Razor que monta DataViews. Guardar en UTF-8 con BOM. *@
+@{
+    ViewBag.Title = "__Título__";
+    // Cache-busting automático: cambia cuando se recompila ClientApp.
+    long dvV = System.IO.File.GetLastWriteTimeUtc(Server.MapPath("~/Content/dataviews/dataviews.js")).Ticks;
+}
+<link href="~/Content/dataviews/dataviews.css?v=@dvV" rel="stylesheet" />
+@* Reserva la barra de scroll: si aparece/desaparece, el ancho del tablero no cambia y fitColumns no entra en bucle. *@
+<style>html { scrollbar-gutter: stable; }</style>
+
+<div style="max-width:1600px;margin:0 auto;padding:28px 24px 48px">
+    <div id="dataviews-root" data-user="@User.Identity.Name"></div>
+</div>
+
+<script type="module" src="~/Content/dataviews/dataviews.js?v=@dvV"></script>

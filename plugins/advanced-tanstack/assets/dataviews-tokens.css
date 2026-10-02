@@ -1,0 +1,9 @@
+/* Alias --c-* → --dt-* para usar DataViews con el tema por defecto (default-theme, tokens --dt-*). Cargar después de theme-tokens.css. */
+:root, .dt-thp {   /* .dt-thp: el espacio de trabajo con tema propio (Estilo) recalcula los alias con sus --dt-* */
+    --c-bg: var(--dt-bg); --c-surface: var(--dt-surface); --c-surface-2: var(--dt-surface-2);
+    --c-border: var(--dt-border); --c-border-strong: var(--dt-border-strong);
+    --c-text-h: var(--dt-text); --c-text-b: var(--dt-text-body); --c-text-m: var(--dt-text-muted); --c-text-faint: var(--dt-text-faint);
+    --c-brand: var(--dt-brand); --c-brand-emphasis: var(--dt-brand-emphasis); --c-brand-light: var(--dt-brand-subtle); --c-danger: var(--dt-danger);
+    --c-nuevo: var(--dt-state-new); --c-curso: var(--dt-state-active); --c-espera: var(--dt-state-waiting); --c-espera-bg: var(--dt-state-waiting-bg);
+    --c-pendiente: var(--dt-state-pending); --c-resuelto: var(--dt-state-done); --c-cancelado: var(--dt-state-canceled); --c-total: var(--dt-state-extra);
+}
