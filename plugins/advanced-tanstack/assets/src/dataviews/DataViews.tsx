@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type DragEvent, type ReactNode } from 'react';
-import { createPortal, flushSync } from 'react-dom';
+import { flushSync } from 'react-dom';
 import {
   getCoreRowModel,
   getFilteredRowModel,
@@ -15,7 +15,7 @@ import { Popover, closePopover } from './Popover';
 import { downloadExcel, printPdf, type ExportData } from './exportData';
 import { SortEditor } from './SortEditor';
 import { GroupOrderEditor } from './GroupOrderEditor';
-import { StyleMenu, hasScopedThemes, readStyle, reduceMotion, saveStyle, styleAttrs, useSiteTheme, type StylePrefs } from './StyleMenu';
+import { STYLE_DEFAULTS, StyleMenu, hasScopedThemes, reduceMotion, styleAttrs, useSiteTheme, type StylePrefs } from './StyleMenu';
 import { TableView } from './TableView';
 import { ViewTabs } from './ViewTabs';
 import { GroupRail } from './GroupRail';
@@ -71,10 +71,6 @@ export interface DataViewsProps {
   hideRefresh?: boolean;
   /** Diseños disponibles (tope): cada vista elige cuáles mostrar en "Configuración"; por defecto todos. */
   viewTypes?: ViewType[];
-  /** Clave de localStorage de la herramienta Estilo (preferencia personal del espacio de trabajo), p. ej. '<app>-tb'. */
-  styleKey?: string;
-  /** Selector del elemento de la página donde va el botón Estilo, fuera del espacio de trabajo (p. ej. junto al título). Sin él, va en la barra. */
-  styleSlot?: string;
   /** Herramientas de la barra; todas encendidas salvo las que se pasen en false. */
   tools?: Partial<Record<ToolId, boolean>>;
 }
@@ -142,14 +138,11 @@ export function DataViews(p: DataViewsProps) {
     else fn();
   };
 
-  // Estilo de lectura guardado: se aplica al montar (el script del <head> lo hace antes de pintar, si está).
-  const styleKey = p.styleKey ?? 'dataviews-tb';
-  const [style, setStyle] = useState(() => readStyle(styleKey));
-  const changeStyle = (next: StylePrefs) => { setStyle(next); saveStyle(styleKey, next); };
+  // Estilo de la vista (menú «…»): se guarda con la vista, como sus filtros y columnas
+  const style: StylePrefs = { ...STYLE_DEFAULTS, ...view.style };
+  const changeStyle = (next: StylePrefs) => set({ style: next });
   const [themed] = useState(hasScopedThemes);
   const siteTheme = useSiteTheme();
-  const [styleSlot, setStyleSlot] = useState<Element | null>(null);
-  useEffect(() => setStyleSlot(p.styleSlot ? document.querySelector(p.styleSlot) : null), [p.styleSlot]);
 
   // Una vista con un alcance no permitido (storage viejo o manipulado) cae al primero permitido.
   const source = p.sources.some(s => s.id === view.source) ? view.source : p.sources[0].id;
@@ -467,16 +460,9 @@ export function DataViews(p: DataViewsProps) {
             </div>
   ) : undefined;
 
-  // Botón Estilo: junto al título de la página (styleSlot) o, sin lugar indicado, en la barra.
-  const styleTool = (
-    <Popover className="dv-tool dv-pop--style" align="right" label={<><i className="fas fa-palette" aria-hidden /> Estilo</>}>
-      <StyleMenu prefs={style} onChange={changeStyle} themed={themed} site={siteTheme} />
-    </Popover>
-  );
 
   return (
     <div className={`dv${themed ? ' dt-thp' : ''}`} {...styleAttrs(style, siteTheme, themed)}>
-      {has('style') && styleSlot && createPortal(<div className="dv-ext">{styleTool}</div>, styleSlot)}
       <ViewTabs
         views={views}
         activeId={view.id}
@@ -488,6 +474,7 @@ export function DataViews(p: DataViewsProps) {
         onDuplicate={duplicate}
         onRemove={remove}
         config={configPanel}
+        style={has('style') ? <StyleMenu prefs={style} onChange={changeStyle} themed={themed} site={siteTheme} /> : undefined}
       />
 
       <div className="dv-toolbar" role="toolbar" aria-label="Opciones de la vista">
@@ -558,7 +545,6 @@ export function DataViews(p: DataViewsProps) {
             ))}
           </div>
         </Popover>}
-          {has('style') && !styleSlot && styleTool}
 
           {has('export') && (
             <Popover className="dv-tool dv-pop--menu" align="right" label={tool('fa-download', 'Descargar')}>

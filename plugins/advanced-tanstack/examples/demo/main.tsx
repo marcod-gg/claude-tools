@@ -110,8 +110,6 @@ function App() {
       defaultViews={defaults}
       rowHref={r => `#mantencion-${r.id}`}
       exportTitle="Mantenciones de flota"
-      styleKey="flota-tb"
-      styleSlot="#dv-style"
       forcePageSize={full ? 0 : undefined}
       toolbarEnd={
         <span className="dv-tool">

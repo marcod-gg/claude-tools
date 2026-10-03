@@ -49,7 +49,6 @@ html = f"""<!doctype html>
       <h1>Mantenciones de flota</h1>
       <p>Demo de DataViews · 140 mantenciones de prueba · solo lectura</p>
     </div>
-    <div id="dv-style"></div>
   </div>
   <div id="dataviews-root"></div>
 </div>

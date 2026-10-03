@@ -360,13 +360,9 @@ a.dv-title:hover { color: var(--c-brand); text-decoration: underline; }
 .dv-grouprow.is-reorder td { background: var(--c-brand-light); }
 .dv-gorder__grip { color: var(--c-text-faint); font-size: .72rem; margin-right: 6px; }
 
-/* Herramienta Estilo (StyleMenu): preferencias del espacio de trabajo en data-tb-* sobre .dv (no tocan la página), tokens --c-* */
-.dv-ext { font-size: .84rem; color: var(--c-text-b); }
-.dv-ext button { font: inherit; color: inherit; }
-.dv-ext .dv-pop--style > .dv-btn { gap: 7px; }
+/* Estilo (StyleMenu, menú «…» de la vista): se guarda en cada vista y se aplica en data-tb-* sobre .dv (no toca la página), tokens --c-* */
 .dv-style__note { margin: 0; font-size: .74rem; }
-.dv-pop--style .dv-pop__panel { width: 300px; }
-.dv-style { gap: 8px; }
+.dv-pop--menu .dv-style { width: 330px; gap: 8px; } /* el panel define su ancho: las opciones no se cortan */
 .dv-style > b { margin-top: 4px; font-size: .74rem; text-transform: uppercase; letter-spacing: .05em; color: var(--c-text-m); }
 .dv-style__row { display: grid; gap: 4px; }
 .dv-style__label { font-size: .78rem; color: var(--c-text-b); }

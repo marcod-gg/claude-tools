@@ -80,7 +80,7 @@ cuentan filtros y búsqueda; el grupo elegido sale en la descarga como un filtro
 | **Pantalla completa** | botón en `toolbarEnd` + `forcePageSize={full ? 0 : undefined}` | Sobre un contenedor con título y herramientas (`#board-screen`) |
 | **Actualización automática** | `assets/screen/board-header.js` + `dataviews:reload` | Indicador "Actualizado hace Xs" (solo informa), frecuencia 1/5/15/30 min guardada, recarga sin vaciar la vista. "Actualizar ahora" va como herramienta en `toolbarEnd` (dispara `dataviews:reload`) |
 | **Botón Actualizar del pie** | encendido; `hideRefresh` lo oculta | Ocultarlo con actualización automática: lo reemplaza la herramienta "Actualizar ahora" |
-| **Estilo** | `tools.style` (encendida) + `styleKey="<app>-tb"` + `styleSlot="#dv-style"` | Botón **fuera del espacio de trabajo**, junto al título de la página (`styleSlot`: elemento donde se dibuja; sin él va en la barra). Preferencia personal (no de la vista) que **solo cambia el espacio de trabajo**: atributos `data-tb-*` sobre `.dv`, nunca en `<html>`. Apariencia (con default-theme: el `.dv` lleva `.dt-thp` y su propio `data-theme`/`data-contrast`): Sistema (por defecto: sigue en vivo el tema de la propia web, `data-theme`/`data-bs-theme` en `<html>`, con su daltonismo y alto contraste; si la web no tiene tema queda bloqueado como "No disponible" y se usa Claro) / Claro / Oscuro y alto contraste. Lectura: filas alternadas, negrita, líneas entre columnas, subrayar enlaces, espacio entre filas, texto largo, tamaño del texto y animaciones reducidas |
+| **Estilo** | `tools.style` (encendida); opción del menú «…» de las pestañas, junto a Configuración | **Por vista**: se guarda en la vista (`ViewConfig.style`) como sus filtros y columnas; duplicar la copia, una vista nueva parte del estilo por defecto y "Restablecer estilo" solo afecta a la activa. **Solo cambia el espacio de trabajo**: atributos `data-tb-*` sobre `.dv`, nunca en `<html>`. Apariencia (con default-theme: el `.dv` lleva `.dt-thp` y su propio `data-theme`/`data-contrast`): Sistema (por defecto: sigue en vivo el tema de la propia web, `data-theme`/`data-bs-theme` en `<html>`, con su daltonismo y alto contraste; si la web no tiene tema queda bloqueado como "No disponible" y se usa Claro) / Claro / Oscuro y alto contraste. Lectura: filas alternadas, negrita, líneas entre columnas, subrayar enlaces, espacio entre filas, texto largo, tamaño del texto y animaciones reducidas |
 
 Siempre incluidas (sin opción): pestañas de vistas guardadas, paginación (25/50/100/todas), columnas
 arrastrables y redimensionables, copia rápida (`copy: true` en el campo).
@@ -128,7 +128,6 @@ Sin preguntar, se deduce del proyecto:
 | **Actualización automática** | Pantalla de monitoreo o datos que cambian solos (lo dice el pedido) | `board-header.js` + `board-tools.css`, herramienta "Actualizar ahora" en `toolbarEnd`, `hideRefresh` |
 | **Segmentos** | Solo si el pedido los nombra | `railBy` en `defaultViews` (el select principal, `boardField`, si no dice cuál); si no, sin lista: el usuario la activa en Agrupar → "Segmentar según" |
 | **Opciones del select que segmenta** | Código: enum o lista fija → fijas en `FIELDS`; tabla o endpoint → dinámicas | Dinámicas: pedirlas **antes** de montar y armar `FIELDS` una vez |
-| **Estilo en la página Accesibilidad** | Si la app tiene una página de Accesibilidad | Sección `a11y-tableros.section.html` + `tableros-a11y.css` (vista previa): mismas preferencias y misma clave `<app>-tb` que la herramienta Estilo |
 
 La 1 se traduce a `onMove` y `validateMove`; la 2, a los tokens del paso 6. Las vistas por defecto (`defaultViews`) pueden traer `types` (diseños), `tools` (herramientas
 apagadas, p. ej. `{ props: false }`) y `railBy` (segmentos, mismo campo en los tres
@@ -160,12 +159,10 @@ grupo tiene registros. Error frecuente: escrituras que solo piden la política d
    al proyecto, cargar su `theme-tokens.css`, pegar su `head.html` arriba en el `<head>` del layout (reemplazar
    `__STORAGE_KEY__`, `__LEGACY_KEY__`, `__USE_PREF__`) y `assets/dataviews-tokens.css` después de los tokens. Estilo de la página u otra fuente: copiar
    `dataviews-tokens.css` y reemplazar cada `var(--dt-*)` por la variable o color de esa fuente (también en modo oscuro
-   si la app lo tiene). En la vista, junto al título, un `<div id="dv-style"></div>` y `styleSlot="#dv-style"`
-   (botón Estilo); `styleKey="<app>-tb"`. Estilo se aplica en el contenedor desde el primer pintado: no necesita script
-   en el `<head>` ni toca el tema del resto de la app.
+   si la app lo tiene). Estilo vive en el menú «…» de cada vista y se aplica en el contenedor desde el primer pintado: no
+   necesita script en el `<head>`, ni lugar en la página, ni toca el tema del resto de la app.
 7. **Herramientas de pantalla** (si se eligieron): `assets/screen/board-header.js` + `board-tools.css`
-   en la vista; `load` debe avisar `window.dispatchEvent(new CustomEvent('dataviews:loaded', { detail: { ok } }))`. Con panel de
-   Accesibilidad: la sección `a11y-tableros.section.html` (trae su script) y `tableros-a11y.css`.
+   en la vista; `load` debe avisar `window.dispatchEvent(new CustomEvent('dataviews:loaded', { detail: { ok } }))`.
 8. **Verificar**: `npm run build` (tsc + vite) y `npx vitest run`; en el navegador cada diseño elegido en
    claro, oscuro y alto contraste; recargar y comprobar que la vista (filtros, grupos de filtros, columnas,
    anchos) persiste; descargar Excel y PDF si se eligió.
@@ -232,7 +229,6 @@ grupo tiene registros. Error frecuente: escrituras que solo piden la política d
 | `assets/Vista.cshtml` | Vista Razor que carga el build |
 | `assets/screen/Tablero.cshtml` | Vista Razor de monitoreo: título, indicador y frecuencia |
 | `assets/screen/board-header.js`, `board-tools.css` | Actualización automática (tokens `--dt-*`) |
-| `assets/screen/tableros-a11y.css`, `a11y-tableros.section.html` | Sección de Estilo (`data-tb-*`) para la página Accesibilidad y script del `<head>` (las reglas de DataViews van en `dataviews.css`) |
 | `assets/default-theme/theme-tokens.css`, `head.html` | Tema por defecto de la skill: tokens `--dt-*` claro/oscuro/daltonismo/alto contraste, también por elemento con `.dt-thp`, y script del `<head>` |
 | `assets/dataviews-tokens.css` | Alias `--c-*` → `--dt-*` para el tema por defecto (default-theme) |
 | `references/config.md` | Build, props, `ViewConfig`, filtros, TanStack, vistas, descarga, estilos, a11y, tests |

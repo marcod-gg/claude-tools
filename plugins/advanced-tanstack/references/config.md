@@ -70,8 +70,6 @@ interface FieldDef { label; type; options?: { value; color?; icon? }[]; copy?: b
 | `exportTitle?` | Muestra **Descargar** (Excel .xlsx / PDF por impresión) con lo que cumple filtros y búsqueda; el título va en el archivo y en el nombre (`título - vista - fecha`) |
 | `toolbarEnd?` | Botones propios al final de la barra tras un separador (p. ej. Pantalla completa). Usar `<span className="dv-tool"><button className="dv-btn">` + `dv-tool__label` para que se vean igual |
 | `forcePageSize?` | Filas por página forzadas sin tocar la vista guardada (`0` = todas, en pantalla completa) |
-| `styleKey?` | Clave de localStorage de la herramienta Estilo (`<app>-tb`); defecto `dataviews-tb` |
-| `styleSlot?` | Selector del elemento de la página donde se dibuja el botón Estilo (portal), p. ej. junto al título; sin él, va en la barra |
 | `hideRefresh?` | Oculta el botón Actualizar del pie (si la página tiene su propia actualización automática) |
 
 **Recargar desde fuera** (p. ej. tras guardar en un modal de la página): `window.dispatchEvent(new Event('dataviews:refresh'))`
@@ -88,7 +86,7 @@ mismas filas la primera vez. Así sigue siendo una referencia estable. Ver `asse
 ## Vistas guardadas (`useViews`)
 
 - `ViewConfig`: `{ id, name, type: 'table'|'board'|'cards', types?, tools?, source, filters (reglas y grupos), groupBy, railBy?, groupOrder?, boardOpen?, sorting, order?, sizes?,
-  hidden, search, pageSize? }`. Todo JSON: orden de columnas (`columnOrder`), anchos (`columnSizing`),
+  hidden, search, pageSize?, style? }`. Todo JSON: orden de columnas (`columnOrder`), anchos (`columnSizing`),
   ocultas (`columnVisibility`), búsqueda, filas por página y columnas abiertas del tablero (`boardOpen`, por campo) se persisten por vista.
 - Se guarda `{ views, activeId }` en `localStorage[storageKey]` con debounce de 400 ms; JSON corrupto o
   storage bloqueado → `defaultViews()`.
@@ -187,9 +185,9 @@ propio y sin animación en el CSS de la app, no en el componente:
 
 ## Estilo (`StyleMenu.tsx`)
 
-Preferencias personales del espacio de trabajo (`readStyle`/`saveStyle`, `localStorage[styleKey]`), aplicadas como
-atributos del contenedor `.dv` (`styleAttrs`): no tocan `<html>` ni el resto de la página. El botón se dibuja con un
-portal en `styleSlot` (fuera del espacio de trabajo) o, sin él, en la barra.
+Estilo de cada vista: se guarda en `ViewConfig.style` (parcial; lo que falta sale de `STYLE_DEFAULTS`) y se persiste con
+las vistas. Se abre desde el menú «…» de las pestañas (`ViewTabs`, prop `style`), en un panel dentro del mismo menú como
+Configuración. Se aplica como atributos del contenedor `.dv` (`styleAttrs`): no toca `<html>` ni el resto de la página.
 
 - Lectura (`data-tb-*` sobre `.dv`, reglas en `dataviews.css` con tokens `--c-*`): `striped` (filas pares de datos con
   `:nth-child(even of :not(.dv-grouprow))`), `bold`, `lines`, `underline`, `density`, `wrap`, `size` (`zoom` sobre `.dv`)

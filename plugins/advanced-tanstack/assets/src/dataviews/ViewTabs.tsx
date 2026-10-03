@@ -3,7 +3,7 @@ import { closePopover, Popover } from './Popover';
 import { TYPE_ICON, TYPE_LABEL } from './useViews';
 import type { ViewConfig, ViewType } from './types';
 
-export function ViewTabs({ views, types, activeId, onSelect, onRename, onAdd, onDuplicate, onRemove, config }: {
+export function ViewTabs({ views, types, activeId, onSelect, onRename, onAdd, onDuplicate, onRemove, config, style }: {
   types: ViewType[];
   views: ViewConfig[];
   activeId: string;
@@ -14,9 +14,11 @@ export function ViewTabs({ views, types, activeId, onSelect, onRename, onAdd, on
   onRemove: (id: string) => void;
   /** Panel "Configuración" (diseños y herramientas); se abre dentro del menú "…". */
   config?: ReactNode;
+  /** Panel "Estilo" de la vista activa; se abre dentro del menú "…". */
+  style?: ReactNode;
 }) {
   const [editing, setEditing] = useState<string | null>(null);
-  const [configuring, setConfiguring] = useState(false);
+  const [panel, setPanel] = useState<'config' | 'style' | null>(null);
 
   const commit = (id: string, name: string) => {
     if (name.trim()) onRename(id, name.trim());
@@ -68,18 +70,23 @@ export function ViewTabs({ views, types, activeId, onSelect, onRename, onAdd, on
       </Popover>
 
       <Popover label={<i className="fas fa-ellipsis" aria-label="Acciones de la vista" />} className="dv-pop--menu" align="right"
-        onToggle={open => { if (!open) setConfiguring(false); }}>
-        {configuring ? (
+        onToggle={open => { if (!open) setPanel(null); }}>
+        {panel ? (
           <>
-            <button type="button" className="dv-menuitem" onClick={() => setConfiguring(false)} autoFocus>
-              <i className="fas fa-arrow-left" aria-hidden /> Configuración
+            <button type="button" className="dv-menuitem" onClick={() => setPanel(null)} autoFocus>
+              <i className="fas fa-arrow-left" aria-hidden /> {panel === 'config' ? 'Configuración' : 'Estilo'}
             </button>
-            {config}
+            {panel === 'config' ? config : style}
           </>
         ) : <>
         {config && (
-          <button type="button" className="dv-menuitem" onClick={() => setConfiguring(true)}>
+          <button type="button" className="dv-menuitem" onClick={() => setPanel('config')}>
             <i className="fas fa-sliders" aria-hidden /> Configuración
+          </button>
+        )}
+        {style && (
+          <button type="button" className="dv-menuitem" onClick={() => setPanel('style')}>
+            <i className="fas fa-palette" aria-hidden /> Estilo
           </button>
         )}
         <button type="button" className="dv-menuitem" onClick={e => { setEditing(activeId); closePopover(e.currentTarget); }}>

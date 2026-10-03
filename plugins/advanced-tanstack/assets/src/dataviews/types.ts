@@ -1,4 +1,5 @@
 import type { Row as TRow, SortingState, Table } from '@tanstack/react-table';
+import type { StylePrefs } from './StyleMenu';
 
 export type FieldType = 'text' | 'select' | 'number' | 'date';
 
@@ -56,6 +57,7 @@ export interface ViewConfig {
   hidden: Record<string, boolean>; // columnVisibility: { colId: false }
   search: string;
   pageSize?: number; // filas por página en tabla y lista; 0 = todas (por defecto 25)
+  style?: Partial<StylePrefs>; // Estilo de esta vista (menú «…»); ausente = STYLE_DEFAULTS
 }
 
 export type Row = Record<string, unknown>;

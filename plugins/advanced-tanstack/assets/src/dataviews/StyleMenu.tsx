@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Herramienta "Estilo": preferencias personales del espacio de trabajo (no de la vista ni de la página). Se aplican como
+ * Herramienta "Estilo" (menú «…» de las pestañas): se guarda en cada vista (ViewConfig.style). Se aplica como
  * atributos sobre el contenedor .dv, así no tocan el resto de la app. Con el tema por defecto (default-theme, tokens --dt-*) el contenedor
  * lleva además su propio tema (.dt-thp + data-theme/data-contrast): claro, oscuro o "Sistema" = el tema de la propia web
  * (data-theme / data-bs-theme en <html>), seguido en vivo. Si la web no tiene tema, "Sistema" no está disponible y va claro.
@@ -34,14 +34,6 @@ export const STYLE_DEFAULTS: StylePrefs = {
   theme: 'system', contrast: 'default', striped: false, bold: false, lines: false, underline: false,
   density: 'normal', wrap: 'clip', size: 'normal', motion: 'normal',
 };
-
-export function readStyle(key: string): StylePrefs {
-  try { return { ...STYLE_DEFAULTS, ...(JSON.parse(localStorage.getItem(key) ?? 'null') ?? {}) }; } catch { return STYLE_DEFAULTS; }
-}
-
-export function saveStyle(key: string, p: StylePrefs) {
-  try { localStorage.setItem(key, JSON.stringify(p)); } catch { /* storage bloqueado: solo esta sesión */ }
-}
 
 /** Tema por defecto (default-theme) cargado: sus tokens permiten dar tema propio al espacio de trabajo. */
 export const hasScopedThemes = () => getComputedStyle(document.documentElement).getPropertyValue('--dt-bg').trim() !== '';
@@ -100,7 +92,7 @@ export function StyleMenu({ prefs, onChange, themed, site }: { prefs: StylePrefs
   );
   return (
     <div className="dv-editor dv-style">
-      <p className="dv-muted dv-style__note">Solo cambia este espacio de trabajo, no el resto de la página.</p>
+      <p className="dv-muted dv-style__note">Solo cambia esta vista; las demás conservan su propio estilo.</p>
       {themed && <>
         <b>Apariencia</b>
         {radios('Tema', [['system', 'Sistema'], ['light', 'Claro'], ['dark', 'Oscuro']], theme, v => set({ theme: v as StylePrefs['theme'] }),

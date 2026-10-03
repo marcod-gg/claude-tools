@@ -1,7 +1,7 @@
 # Demo
 
 Ejemplo completo de la skill aplicada desde cero: mantenciones de flota (140 registros de prueba), solo lectura, con
-los tres diseños, todas las herramientas, Estilo junto al título, pantalla completa y el tema por defecto
+los tres diseños, todas las herramientas, Estilo por vista (menú «…»), pantalla completa y el tema por defecto
 (`assets/default-theme/`). Respuestas usadas en las preguntas de la skill: no se mueven registros; tema por defecto.
 
 | Archivo | Qué es |

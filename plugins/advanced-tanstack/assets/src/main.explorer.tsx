@@ -139,8 +139,6 @@ function App({ fields, first, url, user, admin, sections, canSections }: { field
         location.reload(); // las secciones son opciones de FIELDS: se rearman al montar
       } : undefined}
       exportTitle="Reportes"
-      styleKey="__APP__-tb"
-      styleSlot="#dv-style"
     />
   );
 }
