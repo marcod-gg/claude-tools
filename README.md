@@ -5,12 +5,14 @@ Skills propias para Claude Code, publicadas como marketplace de plugins.
 | Plugin | Qué hace |
 |---|---|
 | `advanced-tanstack` | Tablas de datos con TanStack Table (React + Vite): vistas guardadas tipo Notion, tabla, tablero kanban y tarjetas, filtros y/o con grupos, segmentos, orden personalizado arrastrando, descarga Excel/PDF y estilo por espacio de trabajo. Ejemplo en [`plugins/advanced-tanstack/examples/demo/`](plugins/advanced-tanstack/examples/demo/). |
+| `organigrama` | Organigramas interactivos sin dependencias: por jefatura directa, de equipos anidados (áreas y transversales) e interno por equipo. Marca de agua, zoom, buscador, arrastre, pantalla completa y descarga PNG/PDF de todo o de una parte (descendente, ascendente, con pares). Modelo opcional Postgres/Supabase. Ejemplo en [`plugins/organigrama/examples/demo/`](plugins/organigrama/examples/demo/). |
 
 ## Instalar
 
 ```bash
 claude plugin marketplace add marcod-gg/claude-tools
 claude plugin install advanced-tanstack@claude-tools
+claude plugin install organigrama@claude-tools
 ```
 
 Para un proyecto concreto, agregar `--scope project` (queda en su `.claude/settings.json`).

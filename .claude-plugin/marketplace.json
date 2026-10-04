@@ -1,12 +1,19 @@
 {
   "name": "claude-tools",
   "description": "Skills propias para Claude Code.",
-  "owner": { "name": "marcod-gg" },
+  "owner": {
+    "name": "marcod-gg"
+  },
   "plugins": [
     {
       "name": "advanced-tanstack",
       "source": "./plugins/advanced-tanstack",
       "description": "Tablas de datos con TanStack Table: vistas tipo Notion, tabla, tablero y tarjetas."
+    },
+    {
+      "name": "organigrama",
+      "source": "./plugins/organigrama",
+      "description": "Organigramas interactivos: por jefatura, equipos anidados e interno por equipo, con zoom, buscador y descarga PNG/PDF."
     }
   ]
 }

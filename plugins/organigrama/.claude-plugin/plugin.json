@@ -1,0 +1,7 @@
+{
+  "name": "organigrama",
+  "description": "Organigramas interactivos sin dependencias: por jefatura, de equipos anidados (áreas y transversales) e interno por equipo, con marca de agua, zoom, buscador, arrastre y descarga PNG/PDF de todo o de una parte (descendente, ascendente, con pares).",
+  "version": "1.0.0",
+  "author": { "name": "marcod-gg" },
+  "keywords": ["organigrama", "org-chart", "jerarquia", "equipos", "jefaturas"]
+}

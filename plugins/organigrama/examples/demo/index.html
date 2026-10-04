@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Organigrama · demo</title>
+<!-- Servir esta carpeta por HTTP (los módulos ES no cargan desde file://): desde la raíz del plugin,
+     python -m http.server 8080  y abrir http://localhost:8080/examples/demo/ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1"></script>
+<link rel="stylesheet" href="../../assets/organigrama.css">
+<style>
+  :root { color-scheme: light dark; }
+  body { margin: 0; padding: 32px 16px 64px; background: var(--org-bg); color: var(--org-ink); font: 400 1rem/1.6 "Geist", system-ui, sans-serif; }
+  main { max-width: 1240px; margin: 0 auto; display: grid; gap: 20px; }
+  h1 { font-weight: 300; letter-spacing: -0.03em; margin: 0; }
+  .seg { display: inline-flex; border: 1px solid var(--org-line); border-radius: 999px; padding: 3px; background: var(--org-surface); width: fit-content; }
+  .seg button { font: inherit; font-size: .9rem; padding: 7px 14px; border: 0; border-radius: 999px; background: none; color: var(--org-muted); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--org-ink); color: var(--org-bg); }
+  #aviso:empty { display: none; }
+  #aviso { color: var(--org-accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Organigrama · demo</h1>
+  <div class="seg" role="group" aria-label="Vista">
+    <button type="button" data-v="personas" aria-pressed="true">Personas</button>
+    <button type="button" data-v="equipos" aria-pressed="false">Equipos</button>
+    <button type="button" data-v="equipo" aria-pressed="false">Un equipo (TI)</button>
+  </div>
+  <p id="aviso" role="status"></p>
+  <div id="vista"></div>
+</main>
+<script type="module">
+  import { organigramaPersonas, organigramaEquipos, arbolEquipos, visorOrganigrama } from '../../assets/organigrama.js';
+
+  // Datos de ejemplo: [id, nombre, cargo, jefe]
+  const filas = [
+    ['mc', 'Matías Castro', 'Gerente General', null], ['cb', 'Catalina Bustos', 'Asistente de Gerencia', 'mc'],
+    ['fs', 'Fernanda Soto', 'Gerenta de Operaciones', 'mc'], ['rs', 'Ricardo Soto', 'Jefe de Prevención de Riesgos', 'fs'],
+    ['mr', 'Martina Riquelme', 'Jefa de Bodega', 'fs'], ['gh', 'Gonzalo Herrera', 'Supervisor de Bodega', 'mr'],
+    ['pn', 'Paula Navarrete', 'Operaria de Bodega', 'gh'], ['at', 'Álvaro Tapia', 'Operario de Bodega', 'gh'], ['cs', 'Constanza Salinas', 'Operaria de Bodega', 'gh'],
+    ['so', 'Sebastián Olivares', 'Jefe de Transporte', 'fs'], ['mo', 'Marcelo Ortiz', 'Coordinador de Despacho', 'so'],
+    ['lc', 'Luis Cornejo', 'Conductor', 'mo'], ['hv', 'Héctor Valdés', 'Conductor', 'mo'], ['cm', 'Carla Moreno', 'Conductora', 'mo'],
+    ['rp', 'Rodrigo Pizarro', 'Gerente de Administración y Finanzas', 'mc'], ['fl', 'Florencia Lagos', 'Contadora', 'rp'], ['iv', 'Isidora Vergara', 'Analista de Finanzas', 'fl'],
+    ['jc', 'Josefa Contreras', 'Jefa de Personas', 'rp'], ['as', 'Andrea Sáez', 'Analista de Personas', 'jc'], ['fr', 'Francisco Leiva', 'Asistente de Remuneraciones', 'jc'],
+    ['vr', 'Valentina Reyes', 'Jefa de TI', 'mc'], ['bs', 'Benjamín Sepúlveda', 'Líder de Desarrollo', 'vr'],
+    ['ib', 'Ignacio Bravo', 'Desarrollador', 'bs'], ['fa', 'Felipe Aravena', 'Desarrollador', 'bs'], ['dm', 'Daniela Muñoz', 'Desarrolladora', 'bs'], ['ec', 'Esteban Carrasco', 'Analista de Datos', 'bs'],
+    ['cx', 'Cristóbal Méndez', 'Líder de Soporte', 'vr'], ['af', 'Antonia Fuentealba', 'Analista de Soporte', 'cx'], ['tg', 'Tomás Gallardo', 'Analista de Soporte', 'cx'],
+    ['ce', 'Camila Espinoza', 'Gerenta Comercial', 'mc'], ['jq', 'Joaquín Cárdenas', 'Ejecutivo Comercial', 'ce'], ['vx', 'Valeria Rojas', 'Ejecutiva Comercial', 'ce'],
+    ['ml', 'Macarena Lillo', 'Ejecutiva Comercial', 'ce'], ['nv', 'Nicolás Vidal', 'Practicante', null]];
+  const personas = filas.map(([id, nombre, cargo, jefeId]) => ({ id, nombre, cargo, jefeId, email: `${id}@ejemplo.cl` }));
+  const equipos = [
+    { id: 'g', nombre: 'Gerencia', integrantes: ['mc', 'cb'] },
+    { id: 'op', nombre: 'Gerencia de Operaciones', padreId: 'g', integrantes: ['fs', 'rs'] },
+    { id: 'bo', nombre: 'Bodega', padreId: 'op', integrantes: ['mr', 'gh', 'pn', 'at', 'cs'] },
+    { id: 'tr', nombre: 'Transporte', padreId: 'op', integrantes: ['so', 'mo', 'lc', 'hv', 'cm'] },
+    { id: 'af', nombre: 'Gerencia Finanzas', padreId: 'g', integrantes: ['rp'] },
+    { id: 'fi', nombre: 'Finanzas', padreId: 'af', integrantes: ['fl', 'iv'] },
+    { id: 'pe', nombre: 'Personas', padreId: 'af', integrantes: ['jc', 'as', 'fr'] },
+    { id: 'ti', nombre: 'Gerencia TI', padreId: 'g', integrantes: ['vr'] },
+    { id: 'de', nombre: 'Desarrollo', padreId: 'ti', integrantes: ['bs', 'ib', 'fa', 'dm', 'ec'] },
+    { id: 'so', nombre: 'Soporte', padreId: 'ti', integrantes: ['cx', 'af', 'tg'] },
+    { id: 've', nombre: 'Ventas', integrantes: ['ce', 'jq', 'vx', 'ml'] },
+    { id: 'cp', nombre: 'Comité Paritario', tipo: 'transversal', integrantes: ['rs', 'fs', 'pn', 'lc', 'as'] },
+    { id: 'si', nombre: 'Sindicato N° 1', tipo: 'transversal', integrantes: ['at', 'cs', 'hv', 'cm', 'pn'] }];
+
+  const firma = ['Nexus', 'Fractional IT'];
+  const avisar = t => document.getElementById('aviso').textContent = t;
+  const onPersona = p => avisar(`Clic en ${p.nombre} (${p.cargo}). Aquí la app abre su ficha.`);
+  const vistas = {
+    personas: () => visorOrganigrama(organigramaPersonas(personas, { onPersona }), { nombre: 'Logística Sur', firma, avisar }),
+    equipos: () => visorOrganigrama(organigramaEquipos(equipos, { onEquipo: g => avisar(`Clic en el equipo ${g.nombre}.`) }),
+      { nombre: 'Logística Sur', eyebrow: 'Organigrama de equipos', firma, avisar }),
+    equipo: () => {
+      const dentro = arbolEquipos(equipos).integrantes('ti'); // Gerencia TI con sus subequipos
+      return visorOrganigrama(organigramaPersonas(personas.filter(p => dentro.has(p.id)), { onPersona }), { nombre: 'Gerencia TI · Logística Sur', firma, avisar });
+    },
+  };
+  const mostrar = v => {
+    document.querySelectorAll('.seg button').forEach(b => b.ariaPressed = String(b.dataset.v === v));
+    avisar('');
+    document.getElementById('vista').replaceChildren(vistas[v]());
+  };
+  document.querySelectorAll('.seg button').forEach(b => b.onclick = () => mostrar(b.dataset.v));
+  mostrar('personas');
+</script>
+</body>
+</html>
