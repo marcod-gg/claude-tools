@@ -1,6 +1,6 @@
 ---
 name: advanced-tanstack
-description: Tablas de datos con TanStack Table (React 19 + Vite) — componente DataViews con vistas guardadas tipo Notion (pestañas) y diseños tabla, tablero kanban y tarjetas agrupadas, filtros por tipo con "y"/"o" y grupos de filtros, orden múltiple, agrupado, columnas arrastrables y redimensionables, propiedades visibles, búsqueda, paginación, descarga Excel/PDF, pantalla completa, actualización automática para monitores, persistencia en localStorage, build Vite commiteado y montado en una vista Razor. Antes de implementar pregunta si se mueven registros arrastrando (y entonces qué acción desencadena y con qué condiciones) y de dónde toma el estilo (tema por defecto incluido en la skill, el de la página u otra fuente); siempre solo lectura por registro, y diseños, segmentos y herramientas los elige el usuario en Configuración. Úsala siempre que el usuario pida TanStack, tabla de datos, grilla, "vistas tipo Notion", DataViews, tablero/kanban de registros, "tablero agrupado con tarjetas", filtros y orden guardados, exportar una tabla a Excel o PDF, una pantalla de monitoreo que se actualiza sola, o reemplazar una tabla jQuery/DataTables, aunque no mencione esta skill. Tema por defecto propio en assets/default-theme.
+description: Tablas de datos con TanStack Table (React 19 + Vite) — componente DataViews con vistas guardadas tipo Notion (pestañas) y diseños tabla, tablero kanban y tarjetas agrupadas, filtros por tipo con "y"/"o" y grupos de filtros, orden múltiple, agrupado, columnas arrastrables y redimensionables, propiedades visibles, búsqueda, paginación, acciones masivas con casillas, abrir el registro en pestaña nueva, panel lateral o modal (por vista), descarga Excel/PDF, pantalla completa, actualización automática para monitores, persistencia en localStorage, build Vite commiteado y montado en una vista Razor. Antes de implementar pregunta si se mueven registros arrastrando (y entonces qué acción desencadena y con qué condiciones), si se permiten acciones masivas (cuáles, a qué registros y con qué confirmación) y de dónde toma el estilo (tema por defecto incluido en la skill, el de la página u otra fuente); siempre solo lectura por registro, y diseños, segmentos y herramientas los elige el usuario en Configuración. Úsala siempre que el usuario pida TanStack, tabla de datos, grilla, "vistas tipo Notion", DataViews, tablero/kanban de registros, "tablero agrupado con tarjetas", filtros y orden guardados, exportar una tabla a Excel o PDF, una pantalla de monitoreo que se actualiza sola, o reemplazar una tabla jQuery/DataTables, aunque no mencione esta skill. Tema por defecto propio en assets/default-theme.
 ---
 
 # Advanced TanStack / DataViews
@@ -75,7 +75,9 @@ cuentan filtros y búsqueda; el grupo elegido sale en la descarga como un filtro
 | **Agrupar** | `tools.group` (encendida) | Segmentos en los tres diseños; además secciones en la tabla y columnas en el tablero. Vista por defecto agrupada: `railBy` en `defaultViews` |
 | **Propiedades** | `tools.props` (encendida) | Columnas visibles (la del título es obligatoria) |
 | **Resumen de la vista** | `tools.summary` (encendida) | Desplegable bajo la barra con todo lo aplicado, una fila por tipo: filtros y grupos, búsqueda, segmentos (propiedad y elegido), secciones/columnas/subtítulos, orden y propiedades ocultas. Cada chip se quita con su ✕ (columnas del tablero y subtítulos solo se cambian en Agrupar); "Quitar todo" limpia todo eso sin tocar diseño ni anchos. Aparece si hay algo aplicado, también en pantalla completa |
-| **Configuración** | `tools.config` (encendida); opción del menú «…» de las pestañas, junto a Renombrar/Duplicar/Eliminar | Por vista: qué diseños muestra (al menos uno, `types`) y qué herramientas se despliegan (Buscar, Filtrar, Ordenar, Agrupar, Propiedades, Descargar, Resumen de la vista; `tools` de la vista). `tools`/`exportTitle` del montaje son el tope |
+| **Configuración** | `tools.config` (encendida); opción del menú «…» de las pestañas, junto a Renombrar/Duplicar/Eliminar | Por vista: qué diseños muestra (al menos uno, `types`), qué herramientas se despliegan (Buscar, Filtrar, Ordenar, Agrupar, Propiedades, Descargar, Resumen de la vista; `tools` de la vista) y **cómo se abren los registros** (abajo). `tools`/`exportTitle` del montaje son el tope |
+| **Abrir registros** | En Configuración, si el montaje ofrece más de un modo (`openModes`) | Clic en el título: **misma pestaña** o **pestaña nueva** (`rowHref`), **panel lateral** (vista previa, sin bloquear el listado) o **modal** (`onOpenRecord(row, mode)`: la página muestra el detalle). Se guarda por vista (`ViewConfig.open`); por defecto modal si hay `onOpenRecord`, si no misma pestaña. Ctrl/clic central siempre abre en otra pestaña. Con panel o modal, `rowHref` debe llevar a una **página dedicada** del registro (no a la misma lista con el modal abierto): es lo que abre "pestaña nueva" |
+| **Acciones masivas** | `bulkActions` (solo si la pregunta 2 lo pide) | Casillas en Tabla (con "todos" en el encabezado: lo que cumple filtros, búsqueda y segmento) y en las tarjetas; barra con "N seleccionados", una botonera de acciones y "Quitar selección". Cada acción dice a cuántos aplica (`when`), corre `run(rows)` y al terminar limpia la selección, avisa y recarga en segundo plano |
 | **Descargar Excel / PDF** | `exportTitle="…"` | Lo que cumple filtros y búsqueda, columnas visibles, sin dependencias (`exportData.ts`) |
 | **Pantalla completa** | botón en `toolbarEnd` + `forcePageSize={full ? 0 : undefined}` | Sobre un contenedor con título y herramientas (`#board-screen`) |
 | **Actualización automática** | `assets/screen/board-header.js` + `dataviews:reload` | Indicador "Actualizado hace Xs" (solo informa), frecuencia 1/5/15/30 min guardada, recarga sin vaciar la vista. "Actualizar ahora" va como herramienta en `toolbarEnd` (dispara `dataviews:reload`) |
@@ -87,13 +89,14 @@ arrastrables y redimensionables, copia rápida (`copy: true` en el campo).
 
 ## Antes de implementar: preguntar (AskUserQuestion)
 
-**Siempre**, aunque el pedido no lo pida (también en demos y prototipos): una sola llamada con estas 2 preguntas,
+**Siempre**, aunque el pedido no lo pida (también en demos y prototipos): una sola llamada con estas 3 preguntas,
 salvo las que el pedido ya responda (si no hay preferencia, la opción A). Diseños, segmentos y herramientas
 **no** se preguntan: el usuario los elige en Configuración (menú «…» de las pestañas) y Agrupar. Las **acciones por
 registro tampoco**: siempre solo lectura (el título es el enlace al detalle); Editar/Eliminar (`rowActions`,
 `cardActions`) solo si el pedido lo pide explícitamente. Lo mismo con **editar grupos** (renombrar con doble clic
 `onRenameGroup`, switch y eliminar vacío `groupActions`, vacíos visibles `showEmptyGroups`): no se pregunta; los grupos
-son fijos salvo que el pedido lo pida.
+son fijos salvo que el pedido lo pida. **Cómo se abre el registro** (pestaña, panel lateral o modal) tampoco: si la página
+puede mostrar el detalle (un modal o formulario propio), pasar `onOpenRecord` y el usuario elige el modo en Configuración.
 
 1. **¿Los usuarios pueden mover registros entre grupos arrastrándolos?** (una tarjeta a otra columna o subtítulo, una
    fila a otra sección, una tarjeta a otro segmento). A: no, un registro cambia de grupo solo desde su detalle.
@@ -109,7 +112,18 @@ son fijos salvo que el pedido lo pida.
      registro (p. ej. no mover si falta un campo). Todas van en `validateMove(row, field, value)`, que devuelve el
      motivo del rechazo (se muestra como aviso); si no se deducen del proyecto, pedir el detalle (qué transiciones, qué
      roles, qué campos). El servidor valida lo mismo: el cliente solo evita el intento.
-2. **¿Qué estilo toma la tabla?** A: **tema por defecto** (`assets/default-theme/`: `theme-tokens.css` + `head.html`,
+2. **¿Se permiten acciones masivas?** (elegir varios registros con casillas y aplicarles una acción a la vez). A: no.
+   B: sí (`bulkActions`). Proponer las que se deducen de la entidad: cambiar el estado (activar, suspender, archivar),
+   cambiar un select (rol, responsable, categoría), reenviar o notificar (invitación, recordatorio), eliminar. **Con B,
+   segunda ronda** (una llamada, `multiSelect`):
+   - **¿Qué acciones?** Las propuestas más "otra". Cada una es `{ id, label, icon, danger?, when?, run }`.
+   - **¿A qué registros aplica cada una?** Todos · según el estado o datos del registro (p. ej. reenviar solo a los
+     pendientes) · según el rol del usuario (p. ej. un admin no toca owners). Van en `when(row)`: el botón muestra a cuántos
+     de los elegidos aplica y `run` recibe solo esos. El servidor valida lo mismo.
+   - **¿Confirmación?** Las destructivas (suspender, eliminar) piden confirmación con un modal de la página; las que piden
+     un dato (cambiar rol, mover a) abren un formulario. Todo en `run`: resolver con el aviso a mostrar; rechazar con el
+     error (o con `null` si el usuario cancela). Necesitan endpoints de escritura con la política de gestión.
+3. **¿Qué estilo toma la tabla?** A: **tema por defecto** (`assets/default-theme/`: `theme-tokens.css` + `head.html`,
    el tema propio de la skill, + `dataviews-tokens.css`; Estilo trae tema del espacio de trabajo y alto
    contraste). B: **analizar el estilo actual de la página**: leer su
    CSS (variables, Bootstrap, colores de marca, radios, fuente) y escribir un `dataviews-tokens.css` propio que apunte
@@ -129,12 +143,12 @@ Sin preguntar, se deduce del proyecto:
 | **Segmentos** | Solo si el pedido los nombra | `railBy` en `defaultViews` (el select principal, `boardField`, si no dice cuál); si no, sin lista: el usuario la activa en Agrupar → "Segmentar según" |
 | **Opciones del select que segmenta** | Código: enum o lista fija → fijas en `FIELDS`; tabla o endpoint → dinámicas | Dinámicas: pedirlas **antes** de montar y armar `FIELDS` una vez |
 
-La 1 se traduce a `onMove` y `validateMove`; la 2, a los tokens del paso 6. Las vistas por defecto (`defaultViews`) pueden traer `types` (diseños), `tools` (herramientas
+La 1 se traduce a `onMove` y `validateMove`; la 2, a `bulkActions`; la 3, a los tokens del paso 6. Las vistas por defecto (`defaultViews`) pueden traer `types` (diseños), `tools` (herramientas
 apagadas, p. ej. `{ props: false }`) y `railBy` (segmentos, mismo campo en los tres
 diseños; sin `railBy` no hay lista). Con gestión de grupos en Tarjetas, `groupBy` igual a `railBy`: los
 controles (renombrar, switch, eliminar) van en los subtítulos.
 
-Con **edición de grupos**, **mover registros** o **acciones** pedidas, el servidor necesita endpoints de escritura con la política de
+Con **edición de grupos**, **mover registros**, **acciones** o **acciones masivas** pedidas, el servidor necesita endpoints de escritura con la política de
 gestión (no la de lectura): p. ej. `Reports/Move(id, sectionId)`, `Sections/Delete(id)` que rechaza si el
 grupo tiene registros. Error frecuente: escrituras que solo piden la política de lectura; revisarlo siempre.
 
@@ -155,7 +169,7 @@ grupo tiene registros. Error frecuente: escrituras que solo piden la política d
 5. **Vista Razor**: `assets/Vista.cshtml` (o `assets/screen/Tablero.cshtml` para monitoreo): link css +
    `div#dataviews-root` con `data-*` + script `type="module"`, versionados, y `scrollbar-gutter: stable`.
    Guardar con BOM.
-6. **Tokens** (según la pregunta 2): el CSS usa solo tokens `--c-*`. Tema por defecto: copiar `assets/default-theme/`
+6. **Tokens** (según la pregunta 3): el CSS usa solo tokens `--c-*`. Tema por defecto: copiar `assets/default-theme/`
    al proyecto, cargar su `theme-tokens.css`, pegar su `head.html` arriba en el `<head>` del layout (reemplazar
    `__STORAGE_KEY__`, `__LEGACY_KEY__`, `__USE_PREF__`) y `assets/dataviews-tokens.css` después de los tokens. Estilo de la página u otra fuente: copiar
    `dataviews-tokens.css` y reemplazar cada `var(--dt-*)` por la variable o color de esa fuente (también en modo oscuro
@@ -163,9 +177,11 @@ grupo tiene registros. Error frecuente: escrituras que solo piden la política d
    necesita script en el `<head>`, ni lugar en la página, ni toca el tema del resto de la app.
 7. **Herramientas de pantalla** (si se eligieron): `assets/screen/board-header.js` + `board-tools.css`
    en la vista; `load` debe avisar `window.dispatchEvent(new CustomEvent('dataviews:loaded', { detail: { ok } }))`.
-8. **Verificar**: `npm run build` (tsc + vite) y `npx vitest run`; en el navegador cada diseño elegido en
-   claro, oscuro y alto contraste; recargar y comprobar que la vista (filtros, grupos de filtros, columnas,
-   anchos) persiste; descargar Excel y PDF si se eligió.
+8. **Verificar**: `npm run build` (tsc + vite) y `npx vitest run` siempre. La revisión en el navegador (Playwright)
+   **solo con confirmación previa**: preguntar antes de abrirlo; muchos cambios no la necesitan, el usuario puede
+   preferir revisar él mismo o probar más adelante. Si confirma: cada diseño elegido en claro, oscuro y alto
+   contraste; recargar y comprobar que la vista (filtros, grupos de filtros, columnas, anchos, modo de abrir)
+   persiste; descargar Excel y PDF si se eligió; probar cada acción masiva con una selección mixta.
 
 ## Principios
 
@@ -191,6 +207,10 @@ grupo tiene registros. Error frecuente: escrituras que solo piden la política d
   roja** (`.rp-act`, `.rp-act--text`, `.rp-act--danger`, en `dataviews.css`), con `aria-label`; el **título es el enlace** al detalle (sin
   botón "Ver"). La celda de acciones de la tabla mide 96 px (solo íconos, defecto); con "Editar" de texto pasar `rowActionsWidth={130}`.
 - Controles de grupo: `.dv-sec-switch` (label + checkbox `role="switch"`) y `.dv-sec-delete` (papelera, `disabled` si el grupo tiene registros), en `dataviews.css`; no requieren Bootstrap.
+- **CSS de la página por etiqueta**: el componente usa `<section>` (columnas del tablero, tarjetas), `<header>`, `<article>`,
+  `<footer>` y `<h3>`. Reglas globales como `section { padding-block: 120px }` o `header { position: fixed }` lo rompen
+  (columnas con un espacio enorme arriba y abajo, encabezados flotando). Acotarlas a la página (`main > section`, `.site-header`)
+  y neutralizar la tipografía display de `h1-h3` dentro de `.dv` en `dataviews-tokens.css`. Revisarlo siempre en el paso 6.
 - **Ojo con la especificidad**: `dataviews.css` tiene `.dv button { color: inherit }`. Los estilos propios de botones
   dentro del componente necesitan `.dv .mi-clase` o el color no se aplica (p. ej. Eliminar no sale rojo).
 - Pestañas en segundo plano: Chrome frena temporizadores y captura; al probar por JS esperar ≥ 1 s o traer la

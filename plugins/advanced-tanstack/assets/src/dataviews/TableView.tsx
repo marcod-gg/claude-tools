@@ -1,12 +1,13 @@
-import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useContext, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import type React from 'react';
 import { flexRender, type Row as TRow } from '@tanstack/react-table';
 import { CopyButton } from './CopyButton';
-import { GroupHeader, Title, Value } from './fields';
+import { GroupHeader, SelectBox, SelectionContext, Title, Value } from './fields';
 import { groupDragSource, groupDropTarget, mergeDrag, type Reorder } from './groupDrag';
 import type { Row, ViewProps } from './types';
 
-// Ancho fijo de la celda de acciones (rowActions): se suma al total para que la tabla no la recorte.
+// Ancho fijo de la celda de acciones (rowActions) y de la casilla de selección: se suman al total para que la tabla no las recorte.
+const SEL_WIDTH = 40;
 
 export function TableView({ table, rows, fields, titleField, sumField, collapsed, onToggle, rowHref, rowActions, rowActionsWidth = 96, groupActions, onRenameGroup, onMoveToGroup, groupReorder }: ViewProps & {
   /** Solo cuando la tabla está agrupada por el campo del tablero: mismas acciones de grupo que el tablero agrupado con tarjetas. */
@@ -18,6 +19,8 @@ export function TableView({ table, rows, fields, titleField, sumField, collapsed
   groupReorder?: Reorder;
 }) {
   // Arrastre de filas a otro grupo (ref: el dato llega a los handlers al instante; estado solo para pintar).
+  const sel = useContext(SelectionContext); // acciones masivas: casilla por fila y "todos" en el encabezado
+  const extra = (rowActions ? rowActionsWidth : 0) + (sel ? SEL_WIDTH : 0);
   const rowDrag = useRef<TRow<Row> | null>(null);
   const [overGroup, setOverGroup] = useState<string | null>(null);
   const headers = table.getHeaderGroups()[0].headers;
@@ -71,7 +74,9 @@ export function TableView({ table, rows, fields, titleField, sumField, collapsed
   const leaf = (r: TRow<Row>) => (
     <tr key={r.id} draggable={!!onMoveToGroup}
       onDragStart={onMoveToGroup && (e => { rowDrag.current = r; e.dataTransfer.setData('text/plain', r.id); e.dataTransfer.effectAllowed = 'move'; })}
-      onDragEnd={onMoveToGroup && (() => { rowDrag.current = null; setOverGroup(null); })}>
+      onDragEnd={onMoveToGroup && (() => { rowDrag.current = null; setOverGroup(null); })}
+      className={sel?.has(r.id) ? 'is-selected' : undefined}>
+      {sel && <td className="dv-td--sel"><SelectBox row={r.original} titleField={titleField} /></td>}
       {r.getVisibleCells().map(c => (
         <td key={c.id} data-col={c.column.id} className={c.column.id === titleField ? 'dv-td--title' : undefined}>
           {c.column.id === titleField
@@ -99,9 +104,17 @@ export function TableView({ table, rows, fields, titleField, sumField, collapsed
 
   return (
     <div className="dv-tablewrap">
-      <table className={`dv-table${resizing ? ' dv-resizing' : ''}`} ref={tableRef} style={{ width: table.getTotalSize() + (rowActions ? rowActionsWidth : 0) }}>
+      <table className={`dv-table${resizing ? ' dv-resizing' : ''}`} ref={tableRef} style={{ width: table.getTotalSize() + extra }}>
         <thead>
           <tr>
+            {sel && (
+              <th className="dv-th--sel" style={{ width: SEL_WIDTH }}>
+                <input type="checkbox" className="dv-selbox" aria-label={`Seleccionar los ${sel.all.length} registros`}
+                  checked={sel.all.length > 0 && sel.all.every(sel.has)}
+                  ref={el => { if (el) el.indeterminate = sel.all.some(sel.has) && !sel.all.every(sel.has); }}
+                  onChange={e => sel.setAll(e.target.checked)} />
+              </th>
+            )}
             {headers.map(h => {
               const dir = h.column.getIsSorted();
               return (
@@ -158,7 +171,7 @@ export function TableView({ table, rows, fields, titleField, sumField, collapsed
                     if (d) onMoveToGroup(d.original, String(r.groupingValue ?? ''));
                   },
                 } : {}, groupDropTarget(groupReorder, String(r.groupingValue ?? '')))}>
-                <td colSpan={headers.length + (rowActions ? 1 : 0)}>
+                <td colSpan={headers.length + (rowActions ? 1 : 0) + (sel ? 1 : 0)}>
                   <GroupHeader row={r} fields={fields} sumField={sumField} collapsed={!!collapsed[r.id]} onToggle={() => onToggle(r.id)}
                     dragProps={groupDragSource(groupReorder, String(r.groupingValue ?? ''))}
                     actions={groupActions?.(String(r.groupingValue ?? ''), r.subRows.map(x => x.original))}

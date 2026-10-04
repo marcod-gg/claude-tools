@@ -71,6 +71,9 @@ interface FieldDef { label; type; options?: { value; color?; icon? }[]; copy?: b
 | `toolbarEnd?` | Botones propios al final de la barra tras un separador (p. ej. Pantalla completa). Usar `<span className="dv-tool"><button className="dv-btn">` + `dv-tool__label` para que se vean igual |
 | `forcePageSize?` | Filas por página forzadas sin tocar la vista guardada (`0` = todas, en pantalla completa) |
 | `hideRefresh?` | Oculta el botón Actualizar del pie (si la página tiene su propia actualización automática) |
+| `onOpenRecord?(row, mode)` | La página abre el registro en **panel lateral** (`mode: 'side'`, vista previa sin bloquear el listado) o **modal** (`'modal'`). El clic simple en el título lo llama; Ctrl/Cmd/Shift/clic central siguen el `rowHref` |
+| `openModes?` | Tope de modos de abrir que ofrece Configuración (`'page' \| 'tab' \| 'side' \| 'modal'`). Por defecto: `page` y `tab` si hay `rowHref`, `side` y `modal` si hay `onOpenRecord`. Cada vista guarda el suyo en `ViewConfig.open` (por defecto `modal` si se ofrece, si no el primero) |
+| `bulkActions?` | Acciones masivas `BulkAction[]`: casillas en Tabla y en las tarjetas por defecto, y una barra con lo elegido. `BulkAction = { id, label, icon?, danger?, when?(row), run(rows) }`: `when` filtra a qué registros aplica (el botón muestra cuántos y se deshabilita si a ninguno); `run` recibe solo esos, resuelve con el aviso (o vacío para el genérico) y rechaza con el error o `null` (cancelado). Tras `run` se limpia la selección y se recarga en segundo plano (también si falla: pudo aplicarse a una parte). La selección dura mientras no cambien la vista ni el alcance; "todos" del encabezado elige lo que cumple filtros, búsqueda y segmento, no solo la página |
 
 **Recargar desde fuera** (p. ej. tras guardar en un modal de la página): `window.dispatchEvent(new Event('dataviews:refresh'))`
 vacía la caché y vuelve a llamar `load`.
@@ -86,7 +89,7 @@ mismas filas la primera vez. Así sigue siendo una referencia estable. Ver `asse
 ## Vistas guardadas (`useViews`)
 
 - `ViewConfig`: `{ id, name, type: 'table'|'board'|'cards', types?, tools?, source, filters (reglas y grupos), groupBy, railBy?, groupOrder?, boardOpen?, sorting, order?, sizes?,
-  hidden, search, pageSize?, style? }`. Todo JSON: orden de columnas (`columnOrder`), anchos (`columnSizing`),
+  hidden, search, pageSize?, style?, open? }`. Todo JSON: orden de columnas (`columnOrder`), anchos (`columnSizing`),
   ocultas (`columnVisibility`), búsqueda, filas por página y columnas abiertas del tablero (`boardOpen`, por campo) se persisten por vista.
 - Se guarda `{ views, activeId }` en `localStorage[storageKey]` con debounce de 400 ms; JSON corrupto o
   storage bloqueado → `defaultViews()`.

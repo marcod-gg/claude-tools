@@ -20,10 +20,10 @@ import { TableView } from './TableView';
 import { ViewTabs } from './ViewTabs';
 import { GroupRail } from './GroupRail';
 import { groupDragSource, groupDropTarget, mergeDrag, type Reorder } from './groupDrag';
-import { buildColumns, formatValue } from './fields';
+import { OpenRecord, SelectionContext, buildColumns, formatValue, type Selection } from './fields';
 import { PAGE_SIZES, compareValues, describeFilter, findOperator, isActive, isGroup, matchFilters, matchSearch, paginate, railGroups, railKey, ruleValueLabel, withGroupOrder } from './rules';
 import { TYPE_ICON, TYPE_LABEL, useViews } from './useViews';
-import type { Fields, Row, ViewConfig, ViewType } from './types';
+import type { BulkAction, Fields, OpenMode, Row, ViewConfig, ViewType } from './types';
 import './dataviews.css';
 
 export interface DataViewsProps {
@@ -73,7 +73,20 @@ export interface DataViewsProps {
   viewTypes?: ViewType[];
   /** Herramientas de la barra; todas encendidas salvo las que se pasen en false. */
   tools?: Partial<Record<ToolId, boolean>>;
+  /** Abre el registro en la página: panel lateral (vista previa) o modal, según la vista. Sin esto solo hay enlaces (rowHref). */
+  onOpenRecord?: (row: Row, mode: 'side' | 'modal') => void;
+  /** Modos que cada vista puede elegir en Configuración (tope). Por defecto: misma pestaña y nueva con rowHref; panel y modal con onOpenRecord. */
+  openModes?: OpenMode[];
+  /** Acciones masivas: casillas en Tabla y tarjetas, y una barra con estas acciones sobre lo elegido. */
+  bulkActions?: BulkAction[];
 }
+
+const OPEN_LABEL: Record<OpenMode, { label: string; icon: string }> = {
+  page: { label: 'En la misma pestaña', icon: 'fa-arrow-right' },
+  tab: { label: 'En una pestaña nueva', icon: 'fa-arrow-up-right-from-square' },
+  side: { label: 'Panel lateral (vista previa)', icon: 'fa-table-columns' },
+  modal: { label: 'Ventana sobre la vista (modal)', icon: 'fa-window-maximize' },
+};
 
 export type ToolId = 'search' | 'filter' | 'sort' | 'group' | 'props' | 'export' | 'summary' | 'style' | 'config';
 
@@ -169,14 +182,15 @@ export function DataViews(p: DataViewsProps) {
   }, []);
   // Recarga en segundo plano sin vaciar la vista (auto-refresh de pantallas): window.dispatchEvent(new Event('dataviews:reload')).
   useEffect(() => {
-    const h = () => load(source)
-      .then(r => setCache(c => ({ ...c, [source]: { rows: r.rows, note: r.note, loading: false } })))
-      .catch(() => { /* se conservan las filas anteriores */ });
+    const h = () => { reload(); };
     window.addEventListener('dataviews:reload', h);
     return () => window.removeEventListener('dataviews:reload', h);
   }, [source, load]);
   const loaded = cache[source];
   const allRows = loaded?.rows ?? NO_ROWS;
+  const reload = () => load(source)
+    .then(r => setCache(c => ({ ...c, [source]: { rows: r.rows, note: r.note, loading: false } })))
+    .catch(() => { /* se conservan las filas anteriores */ });
 
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [notice, setNotice] = useState<string | null>(null);
@@ -304,6 +318,44 @@ export function DataViews(p: DataViewsProps) {
     };
   };
   const goPage = (i: number) => tx(() => setPageIndex(i));
+
+  // Acciones masivas: lo elegido se recuerda por id mientras la vista y el alcance no cambien.
+  // "Todos" del encabezado elige lo que cumple filtros, búsqueda y segmento (no solo la página).
+  const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
+  useEffect(() => setSelected(new Set()), [view.id, source]);
+  const rowId = (r: Row) => String(r[p.idField]);
+  const dataIds = useMemo(() => data.map(r => String(r[p.idField])), [data, p.idField]);
+  const selection: Selection | null = p.bulkActions?.length ? {
+    id: rowId,
+    has: id => selected.has(id),
+    toggle: id => setSelected(s => { const n = new Set(s); if (!n.delete(id)) n.add(id); return n; }),
+    all: dataIds,
+    setAll: on => setSelected(s => { const n = new Set(s); dataIds.forEach(id => (on ? n.add(id) : n.delete(id))); return n; }),
+  } : null;
+  const selRows = selection ? allRows.filter(r => selected.has(rowId(r))) : NO_ROWS;
+  const runBulk = async (a: BulkAction) => {
+    const rowsFor = a.when ? selRows.filter(a.when) : selRows;
+    if (!rowsFor.length) return;
+    setBulkBusy(true);
+    try {
+      const msg = await a.run(rowsFor);
+      setSelected(new Set());
+      setNotice(msg || `${a.label}: ${rowsFor.length} ${rowsFor.length === 1 ? 'registro' : 'registros'}.`);
+      reload();
+    } catch (e) {
+      if (e !== null) setNotice(e instanceof Error && e.message ? e.message : 'No se pudo completar la acción.'); // null = cancelado
+      reload(); // pudo aplicarse a una parte
+    } finally {
+      setBulkBusy(false);
+    }
+  };
+
+  // Abrir registro desde su título: cada vista elige el modo en Configuración, dentro de los que permite el montaje.
+  const openOffered = (p.openModes ?? (['page', 'tab', 'side', 'modal'] as OpenMode[]))
+    .filter(m => (m === 'page' || m === 'tab' ? !!p.rowHref : !!p.onOpenRecord));
+  const openMode: OpenMode = view.open && openOffered.includes(view.open) ? view.open
+    : openOffered.includes('modal') ? 'modal' : openOffered[0] ?? 'page';
   const selectFields = Object.keys(fields).filter(id => fields[id].type === 'select');
   // Reordenar arrastrando los grupos de un select (segmentos, secciones, columnas, subtítulos): guarda el orden personalizado.
   const reorderFor = (id: string): Reorder | undefined => (fields[id]?.type === 'select' ? {
@@ -457,6 +509,16 @@ export function DataViews(p: DataViewsProps) {
                 </label>
               ))}
               <span className="dv-muted">Ocultar una herramienta no quita sus filtros ni su orden.</span>
+              {openOffered.length > 1 && <>
+              <b>Abrir registros</b>
+              {openOffered.map(m => (
+                <label key={m} className="dv-check">
+                  <input type="radio" name={`dv-open-${view.id}`} checked={openMode === m} onChange={() => set({ open: m })} />
+                  <i className={`fas ${OPEN_LABEL[m].icon}`} aria-hidden /> {OPEN_LABEL[m].label}
+                </label>
+              ))}
+              <span className="dv-muted">Al hacer clic en el título. Ctrl o clic central siempre abre en otra pestaña.</span>
+              </>}
             </div>
   ) : undefined;
 
@@ -593,7 +655,28 @@ export function DataViews(p: DataViewsProps) {
         </div>
       )}
 
-      {body}
+      {selection && selRows.length > 0 && (
+        <div className="dv-bulk" role="region" aria-label="Acciones masivas">
+          <b aria-live="polite">{selRows.length} {selRows.length === 1 ? 'seleccionado' : 'seleccionados'}</b>
+          <div className="dv-bulk__acts">
+            {p.bulkActions!.map(a => {
+              const n = a.when ? selRows.filter(a.when).length : selRows.length;
+              return (
+                <button key={a.id} type="button" className={`dv-btn dv-bulk__btn${a.danger ? ' is-danger' : ''}`} disabled={!n || bulkBusy}
+                  title={n === 0 ? 'No aplica a lo seleccionado' : n < selRows.length ? `Aplica a ${n} de ${selRows.length}` : undefined}
+                  onClick={() => runBulk(a)}>
+                  {a.icon && <i className={`fas ${a.icon}`} aria-hidden />} {a.label}{n > 0 && n < selRows.length ? ` (${n})` : ''}
+                </button>
+              );
+            })}
+          </div>
+          <button type="button" className="dv-link" onClick={() => setSelected(new Set())}>Quitar selección</button>
+        </div>
+      )}
+
+      <OpenRecord.Provider value={{ mode: openMode, open: p.onOpenRecord }}>
+        <SelectionContext.Provider value={selection}>{body}</SelectionContext.Provider>
+      </OpenRecord.Provider>
 
       {/* Pie: resumen de elementos (y en tabla, filas por página + paginación) bajo el contenido. */}
       {loaded && !loaded.loading && !loaded.error && (

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Title, Value, formatValue } from './fields';
+import { SelectBox, Title, Value, formatValue } from './fields';
 import type { Fields, Row } from './types';
 
 /**
@@ -21,7 +21,10 @@ export function RecordCard({ row, fields, titleField, ids, href, actions }: {
   const accent = tags.map(id => fields[id].options?.find(o => o.value === String(row[id]))?.color).find(Boolean);
   return (
     <article className={`dv-card${accent ? ' dv-card--accent' : ''}`} style={accent ? { ['--accent' as string]: accent } : undefined}>
-      <Title row={row} titleField={titleField} href={href} />
+      <div className="dv-card__head">
+        <Title row={row} titleField={titleField} href={href} />
+        <SelectBox row={row} titleField={titleField} />
+      </div>
       {tags.length > 0 && (
         <div className="dv-card__tags">
           {tags.map(id => (

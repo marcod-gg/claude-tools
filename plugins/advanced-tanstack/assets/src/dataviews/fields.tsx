@@ -1,7 +1,30 @@
-import { useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
+import { createContext, useContext, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
 import type { ColumnDef, Row as TRow, SortingFn } from '@tanstack/react-table';
 import { compareValues, toISODate } from './rules';
-import type { FieldDef, Fields, Row } from './types';
+import type { FieldDef, Fields, OpenMode, Row } from './types';
+
+/** Cómo abre el título su registro (lo da DataViews según la vista): pestaña nueva, o panel/modal de la página. */
+export const OpenRecord = createContext<{ mode: OpenMode; open?: (row: Row, mode: 'side' | 'modal') => void }>({ mode: 'page' });
+
+/** Selección para acciones masivas (lo da DataViews con bulkActions): casillas en filas y tarjetas. */
+export interface Selection {
+  id: (row: Row) => string;
+  has: (id: string) => boolean;
+  toggle: (id: string) => void;
+  /** Ids de todo lo que cumple filtros, búsqueda y segmento (no solo la página). */
+  all: string[];
+  setAll: (on: boolean) => void;
+}
+export const SelectionContext = createContext<Selection | null>(null);
+
+/** Casilla para elegir un registro (fila o tarjeta). */
+export function SelectBox({ row, titleField }: { row: Row; titleField: string }) {
+  const sel = useContext(SelectionContext);
+  if (!sel) return null;
+  const id = sel.id(row);
+  return <input type="checkbox" className="dv-selbox" checked={sel.has(id)} onChange={() => sel.toggle(id)}
+    aria-label={`Seleccionar ${String(row[titleField] ?? '') || 'registro'}`} />;
+}
 
 /**
  * Genera columnas TanStack desde FIELDS. Llamar fuera del render o dentro de useMemo:
@@ -52,7 +75,20 @@ export function Value({ field, value }: { field: FieldDef; value: unknown }) {
 
 export function Title({ row, titleField, href }: { row: Row; titleField: string; href?: string }) {
   const text = String(row[titleField] ?? '') || 'Sin título';
-  return href ? <a className="dv-title" href={href}>{text}</a> : <span className="dv-title">{text}</span>;
+  const { mode, open } = useContext(OpenRecord);
+  const inPage = (mode === 'side' || mode === 'modal') && open;
+  if (!href && !inPage) return <span className="dv-title">{text}</span>;
+  return (
+    <a className="dv-title" href={href ?? '#'} target={mode === 'tab' ? '_blank' : undefined} rel={mode === 'tab' ? 'noopener' : undefined}
+      // Panel o modal: el clic simple abre en la página; Ctrl/Cmd/Shift/clic central siguen siendo un enlace normal
+      onClick={inPage ? e => {
+        if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        open(row, mode);
+      } : undefined}>
+      {text}
+    </a>
+  );
 }
 
 /** Encabezado colapsable de un grupo (row de TanStack con getIsGrouped()). */

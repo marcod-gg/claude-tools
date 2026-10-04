@@ -94,6 +94,11 @@
 .dv .dv-search:hover input, .dv .dv-search:focus-within input, .dv .dv-search.has-value input { width: 200px; opacity: 1; margin-left: 8px; }
 .dv-search:focus-within { outline: 2px solid var(--c-brand); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .dv-tool__label, .dv .dv-search input { transition: none; } }
+/* Pantallas angostas: las herramientas pasan a otra línea y la búsqueda abierta no empuja la barra fuera de la pantalla */
+@media (max-width: 767px) {
+  .dv-tools { flex-wrap: wrap; justify-content: flex-end; }
+  .dv .dv-search:hover input, .dv .dv-search:focus-within input, .dv .dv-search.has-value input { width: min(200px, 38vw); }
+}
 
 /* Editores */
 .dv-editor { display: flex; flex-direction: column; gap: 8px; }
@@ -395,3 +400,19 @@ a.dv-title:hover { color: var(--c-brand); text-decoration: underline; }
 .dv[data-tb-size="large"] { zoom: 1.12; }   /* zoom: escala parejo textos en rem, íconos y espacios */
 .dv[data-tb-size="xlarge"] { zoom: 1.25; }
 .dv[data-tb-motion="reduce"], .dv[data-tb-motion="reduce"] * { transition: none !important; animation: none !important; }
+
+/* Acciones masivas (bulkActions): casillas en filas y tarjetas, barra con lo elegido */
+.dv .dv-selbox { width: 16px; height: 16px; margin: 0; accent-color: var(--c-brand); cursor: pointer; flex: none; }
+.dv-th--sel, .dv-td--sel { width: 40px; text-align: center; padding-left: 12px !important; padding-right: 4px !important; }
+.dv-table tbody tr.is-selected > td { background: var(--c-brand-light); }
+.dv-card__head { display: flex; align-items: flex-start; gap: 10px; }
+.dv-card__head .dv-title { flex: 1; min-width: 0; }
+.dv-bulk { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 16px 10px; padding: 8px 12px; border: 1px solid var(--c-brand); border-radius: 10px;
+  background: var(--c-brand-light); color: var(--c-text-h); font-size: .84rem; }
+.dv-bulk__acts { display: flex; flex-wrap: wrap; gap: 6px; }
+.dv .dv-bulk__btn { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 10px; border: 1px solid var(--c-border-strong); border-radius: 8px;
+  background: var(--c-surface); color: var(--c-text-h); font-size: .8rem; font-weight: 600; cursor: pointer; }
+.dv .dv-bulk__btn:hover:not(:disabled) { border-color: var(--c-brand); }
+.dv .dv-bulk__btn:disabled { opacity: .5; cursor: not-allowed; }
+.dv .dv-bulk__btn.is-danger { color: var(--c-danger, var(--c-nuevo)); }
+.dv-bulk .dv-link { margin-left: auto; }

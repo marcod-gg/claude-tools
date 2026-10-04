@@ -38,6 +38,21 @@ export type FilterItem = FilterRule | FilterGroup;
 
 export type ViewType = 'table' | 'board' | 'cards'; // cards = tablero agrupado con tarjetas (ExplorerView)
 
+/** Cómo se abre un registro desde su título: misma pestaña o pestaña nueva (rowHref), panel lateral o modal (onOpenRecord). */
+export type OpenMode = 'page' | 'tab' | 'side' | 'modal';
+
+/** Acción masiva sobre los registros elegidos con las casillas (barra sobre la vista). */
+export interface BulkAction {
+  id: string;
+  label: string;
+  icon?: string; // clase Font Awesome
+  danger?: boolean;
+  /** A qué registros aplica (p. ej. reenviar invitación solo a los pendientes); ausente = a todos. */
+  when?: (row: Row) => boolean;
+  /** Recibe solo los registros a los que aplica. Resuelve con un aviso opcional; rechaza con el error (o null si el usuario canceló). */
+  run: (rows: Row[]) => Promise<string | void>;
+}
+
 // Lo que se persiste: todo serializable a JSON.
 export interface ViewConfig {
   id: string;
@@ -58,6 +73,7 @@ export interface ViewConfig {
   search: string;
   pageSize?: number; // filas por página en tabla y lista; 0 = todas (por defecto 25)
   style?: Partial<StylePrefs>; // Estilo de esta vista (menú «…»); ausente = STYLE_DEFAULTS
+  open?: OpenMode; // cómo se abre el registro desde su título (Configuración); ausente = modal si hay onOpenRecord, si no misma pestaña
 }
 
 export type Row = Record<string, unknown>;
