@@ -7,9 +7,15 @@
 
 <div class="board-main" id="board-screen">
     <div class="board-head">
-        <div>
-            <h1 class="board-head__title">@ViewData["Title"]</h1>
-            <p class="board-head__sub">@ViewData["Subtitle"]</p>
+        <div class="board-head__brand">
+            @if (ViewData["Logo"] is string logo)
+            {
+                <img class="board-head__logo" src="@Url.Content(logo)" alt="" />
+            }
+            <div>
+                <h1 class="board-head__title">@ViewData["Title"]</h1>
+                <p class="board-head__sub">@ViewData["Subtitle"]</p>
+            </div>
         </div>
         <div class="board-tools" role="toolbar" aria-label="Herramientas del tablero">
             <span class="board-tools__status">

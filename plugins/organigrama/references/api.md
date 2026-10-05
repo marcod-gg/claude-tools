@@ -57,6 +57,7 @@ Envuelve cualquiera de los anteriores.
 | `nombre` | Empresa o "Equipo · Empresa"; va en la marca y en el nombre del archivo |
 | `eyebrow` | Línea superior de la marca (`'Organigrama'` por defecto; p. ej. `'Organigrama de equipos'`) |
 | `firma` | `['Producto', 'Marca']` → "por Producto · Marca" en la marca de agua. Sin firma, solo eyebrow y nombre |
+| `logo` | URL de la imagen (o un elemento) del logo de la marca; reemplaza el sello circular de la marca de agua y sale en las descargas. Para el PNG debe ser del mismo origen o servirse con CORS (si no, html-to-image no lo dibuja). SVG o PNG de ~30 px de alto |
 | `avisar(texto)` | Errores de descarga (por defecto `console.error`) |
 | `icono` | Igual que arriba |
 
@@ -69,11 +70,11 @@ La copia exportada se monta fuera de pantalla en `.orgv.orgv--export`; el PDF la
 
 ## Tokens CSS (`organigrama.css`)
 
-Por defecto en `:where(:root)` (especificidad cero) con modo oscuro. El sitio los apunta a su marca:
+Por defecto en `:where(:root)` (especificidad cero), neutros (grises y azul genérico) con modo oscuro. El sitio los apunta a su marca:
 
 ```css
 :root {
-  --org-bg: var(--bg); --org-surface: var(--surface); --org-hover: var(--cream); --org-line: var(--line);
+  --org-bg: var(--bg); --org-surface: var(--surface); --org-hover: var(--hover); --org-line: var(--line);
   --org-ink: var(--ink); --org-ink-2: var(--ink-2); --org-muted: var(--muted);
   --org-accent: var(--accent); --org-on-accent: var(--on-accent);
   --org-radius: var(--radius); --org-shadow: var(--shadow); --org-mono: "Geist Mono", monospace;

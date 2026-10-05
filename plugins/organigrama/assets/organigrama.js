@@ -113,8 +113,8 @@ export function organigramaEquipos(equipos, op = {}) {
 }
 
 // ── Visor ───────────────────────────────────────────────────────────────
-// op: { nombre: 'Logística Sur', eyebrow: 'Organigrama', firma: ['Nexus', 'Fractional IT'] (por <producto> · <marca>),
-//       icono, avisar(texto) (errores de descarga; por defecto console.error) }
+// op: { nombre: 'Logística Sur', eyebrow: 'Organigrama', firma: ['MiApp', 'MiEmpresa'] (por <producto> · <marca>),
+//       logo (URL o elemento; reemplaza el sello), icono, avisar(texto) (errores de descarga; por defecto console.error) }
 export function visorOrganigrama(contenido, op = {}) {
   const icono = op.icono ?? iconoPhosphor;
   const nombre = op.nombre ?? '';
@@ -124,7 +124,8 @@ export function visorOrganigrama(contenido, op = {}) {
   let zoom = 1, teclas = () => { };
 
   const marca = el('div', { className: 'orgv__marca' },
-    el('span', { className: 'orgv__sello', ariaHidden: 'true' }),
+    typeof op.logo === 'string' ? el('img', { className: 'orgv__logo', src: op.logo, alt: '' })
+      : op.logo ?? el('span', { className: 'orgv__sello', ariaHidden: 'true' }),
     el('div', {}, el('span', { className: 'orgv__eyebrow', textContent: eyebrow }), el('b', { textContent: nombre }),
       producto && el('small', {}, `por ${producto}`, marcaTexto && ' · ', marcaTexto && el('span', { className: 'orgv__firma', translate: false, textContent: marcaTexto }))));
   const escala = el('div', { className: 'orgv__zoom' }, contenido);

@@ -1,6 +1,6 @@
 -- Modelo opcional para Postgres / Supabase (skill organigrama). Adaptar nombres al esquema del proyecto:
---   miembros(empresa_id, usuario_id)  la membresía de una persona en una empresa (en Nexus: empresa_miembros)
---   equipos                           en Nexus: grupos (se conservó el nombre porque otra app ya lo usaba)
+--   miembros(empresa_id, usuario_id)  la membresía de una persona en una empresa (p. ej. empresa_miembros)
+--   equipos                           o el nombre que ya use el proyecto (p. ej. grupos; conservarlo si otra app lo usa)
 -- Lo esencial que el organigrama necesita:
 --   · miembros.jefe_usuario_id   jefatura directa, otro miembro de la MISMA empresa, sin ciclos
 --   · miembros.cargo             texto libre

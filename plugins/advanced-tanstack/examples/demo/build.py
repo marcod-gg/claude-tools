@@ -17,10 +17,18 @@ js = read(f'{build}/dataviews.js').replace('</script', '<\\/script')
 page_css = """
 html { scrollbar-gutter: stable; }
 body { margin: 0; }
+/* Look de la página como el demo del organigrama: Geist (solo con la fuente predeterminada; las de Accesibilidad mandan),
+   título liviano, selector de diseño en píldora y fondo con puntos en tablero y tarjetas */
+:root[data-font="roboto"] { --dt-font: "Geist", system-ui, sans-serif; --dt-font-mono: "Geist Mono", ui-monospace, monospace; }
+.dv-seg { border-radius: 999px; padding: 3px; gap: 2px; }
+.dv-seg button { border-radius: 999px; padding: 6px 14px; font-weight: 500; }
+.dv-seg button + button { border-left: 0; }
+.dv-seg button.is-active { background: var(--dt-text); color: var(--dt-bg); }
+.dv-board, .dv-cards { background-image: radial-gradient(circle, color-mix(in srgb, var(--dt-text) 9%, transparent) 1px, transparent 1px); background-size: 22px 22px; }
 #board-screen { max-width: 1600px; margin: 0 auto; padding: 28px 24px 48px; background: var(--dt-bg); }
 #board-screen:fullscreen { max-width: none; overflow: auto; padding: 1rem 1.25rem; }
 .fl-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
-.fl-head h1 { margin: 0 0 4px; font-size: 1.5rem; color: var(--dt-text); }
+.fl-head h1 { margin: 0 0 4px; font-size: 2rem; font-weight: 300; letter-spacing: -0.03em; color: var(--dt-text); }
 .fl-head p { margin: 0; color: var(--dt-text-muted); }
 @media (max-width: 600px) { #board-screen { padding: 16px 16px 32px; } }
 """
@@ -33,7 +41,7 @@ html = f"""<!doctype html>
 <title>Mantenciones de flota</title>
 {head}
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 <style>
 {theme}

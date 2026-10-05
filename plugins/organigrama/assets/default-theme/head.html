@@ -1,0 +1,76 @@
+<!--
+  default-theme · Script del <head>: tema de la página (data-theme en <html>, el que sigue "Sistema" en la herramienta
+  Estilo) y sus opciones de accesibilidad (contraste, daltonismo, fuente y tamaño).
+  Pegar lo más arriba posible dentro de <head> (antes de cualquier CSS/JS que pinte), en el layout común.
+  Aplica la preferencia ANTES del primer pintado → sin parpadeo al cargar en modo oscuro.
+
+  Reemplazar al instalar:
+    __STORAGE_KEY__  → clave en localStorage, p. ej. 'miapp-a11y' (una por aplicación; es por origen/dominio).
+    __LEGACY_KEY__   → clave del toggle claro/oscuro anterior, si existía (p. ej. 'miapp-theme' con 'light'/'dark');
+                       si no había, dejar la cadena vacía ''.
+    __USE_PREF__     → true si la página tiene sesión; false en login/prelogin (siempre claro estándar, así el
+                       login de un equipo compartido no muestra el tema del usuario anterior). En Razor:
+                       @(User.Identity.IsAuthenticated ? "true" : "false"). Si la app no tiene login: true.
+
+  Expone window.dtTheme = { themes, sizes, current(), get(), set(pref) } para la página de Accesibilidad.
+  Preferencia: { mode: 'single'|'auto', single, day, night, contrast: 'default'|'high',
+                 font: 'roboto'|'atkinson'|'lexend'|'system', size: 87.5|100|112.5|125|150 }.
+  En Razor (.cshtml) el único '@' es el de __USE_PREF__; el resto se pega tal cual.
+-->
+<script>
+    (function () {
+        var STORAGE_KEY = '__STORAGE_KEY__', LEGACY_KEY = '__LEGACY_KEY__', USE_PREF = __USE_PREF__;
+        var THEMES = ['light', 'light_colorblind', 'light_tritanopia', 'dark', 'dark_colorblind', 'dark_tritanopia'];
+        var SIZES = [87.5, 100, 112.5, 125, 150];
+        // Fuentes que se descargan de Google Fonts solo si se eligen ("system" no descarga nada; Roboto la carga el layout).
+        var FONTS = { atkinson: 'Atkinson+Hyperlegible:wght@400;700', lexend: 'Lexend:wght@300;400;500;600;700;800' };
+        var root = document.documentElement, mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+        var pref = null;
+        if (USE_PREF) { try { pref = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { } }
+        else pref = { mode: 'single', single: 'light', day: 'light', night: 'dark' };   // sin sesión: tema estándar
+        if (!pref || !pref.mode) {
+            var old = null;
+            try { old = USE_PREF && LEGACY_KEY ? localStorage.getItem(LEGACY_KEY) : null; } catch (e) { }
+            // Sin preferencia: tema claro fijo (no cambia nada a quien ya usaba la app). Para seguir al sistema: mode 'auto'.
+            pref = { mode: 'single', single: old === 'dark' ? 'dark' : 'light', day: 'light', night: 'dark' };
+        }
+        function current() {
+            var t = pref.mode === 'auto' ? (mq && mq.matches ? pref.night : pref.day) : pref.single;
+            return THEMES.indexOf(t) >= 0 ? t : 'light';
+        }
+        function apply() {
+            var t = current().split('_');
+            root.setAttribute('data-theme', t[0]);
+            root.setAttribute('data-bs-theme', t[0]);   // Bootstrap 5.3: modales, dropdowns y formularios siguen el tema solos
+            root.setAttribute('data-vision', t[1] || 'default');
+            root.setAttribute('data-contrast', pref.contrast === 'high' ? 'high' : 'default');
+            var font = (FONTS[pref.font] || pref.font === 'system') ? pref.font : 'roboto';
+            root.setAttribute('data-font', font);
+            if (FONTS[font]) {
+                var link = document.getElementById('dt-font');
+                if (!link) { link = document.createElement('link'); link.id = 'dt-font'; link.rel = 'stylesheet'; document.head.appendChild(link); }
+                link.href = 'https://fonts.googleapis.com/css2?family=' + FONTS[font] + '&display=swap';
+            }
+            var size = SIZES.indexOf(+pref.size) >= 0 ? +pref.size : 100;
+            root.style.fontSize = size === 100 ? '' : size + '%';   // la app debe usar rem para que escale
+        }
+        apply();
+        if (mq && mq.addEventListener) mq.addEventListener('change', function () { if (pref.mode === 'auto') apply(); });
+        window.dtTheme = {
+            themes: THEMES,
+            sizes: SIZES,
+            current: current,
+            get: function () {
+                return { mode: pref.mode, single: pref.single, day: pref.day, night: pref.night,
+                         contrast: pref.contrast || 'default', font: pref.font || 'roboto', size: +pref.size || 100 };
+            },
+            set: function (p) {
+                pref = p;
+                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch (e) { }
+                root.classList.add('theme-anim');
+                setTimeout(function () { root.classList.remove('theme-anim'); }, 520);
+                apply();
+            }
+        };
+    })();
+</script>

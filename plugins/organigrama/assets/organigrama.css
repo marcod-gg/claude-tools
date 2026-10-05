@@ -1,23 +1,24 @@
 /* Organigrama (skill organigrama de claude-tools). Solo tokens --org-*: el sitio los apunta a su marca en su :root.
-   Los valores por defecto van en :where(:root) (especificidad cero), así cualquier :root del sitio los reemplaza. */
+   Los valores por defecto (neutros: grises y azul genérico) van en :where(:root) (especificidad cero), así cualquier
+   :root del sitio los reemplaza. */
 :where(:root) {
-  --org-bg: #f7f3ee;
-  --org-surface: #fffdfa;
-  --org-hover: #efe4d6;
-  --org-line: #e2d8cc;
-  --org-ink: #171310;
-  --org-ink-2: #3a322c;
-  --org-muted: #6b6159;
-  --org-accent: #b4532e;
-  --org-on-accent: #fffaf5;
+  --org-bg: #f6f8fa;
+  --org-surface: #ffffff;
+  --org-hover: #eff2f5;
+  --org-line: #d1d9e0;
+  --org-ink: #1f2328;
+  --org-ink-2: #2f353c;
+  --org-muted: #59636e;
+  --org-accent: #0969da;
+  --org-on-accent: #ffffff;
   --org-radius: 14px;
-  --org-shadow: 0 1px 2px rgb(60 30 10 / .06), 0 24px 60px -20px rgb(60 30 10 / .28);
+  --org-shadow: 0 1px 2px rgb(31 35 40 / .06), 0 24px 60px -20px rgb(31 35 40 / .24);
   --org-mono: "Geist Mono", ui-monospace, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :where(:root) {
-    --org-bg: #14100d; --org-surface: #1c1713; --org-hover: #221b16; --org-line: #2f2721;
-    --org-ink: #f5ede4; --org-ink-2: #ddd2c7; --org-muted: #a99d92; --org-accent: #d9774d; --org-on-accent: #1a0f09;
+    --org-bg: #0d1117; --org-surface: #151b23; --org-hover: #212830; --org-line: #3d444d;
+    --org-ink: #f0f6fc; --org-ink-2: #d1d7e0; --org-muted: #9198a1; --org-accent: #4493f8; --org-on-accent: #0d1117;
     --org-shadow: 0 24px 60px -20px rgb(0 0 0 / .7);
   }
 }
@@ -69,6 +70,9 @@ button.org-persona:hover { background: var(--org-hover); }
 
 /* ── Visor: barra, lienzo con zoom y arrastre, marca de agua ── */
 .orgv { border: 1px solid var(--org-line); border-radius: var(--org-radius); background: var(--org-surface); overflow: hidden; color: var(--org-ink); }
+/* El ancho del árbol no empuja a la página: sin esto, dentro de un grid o flex (min-width: auto) el contenedor crece al
+   ancho del árbol y el lienzo nunca hace scroll. width 100 % para no colapsar a 0 en un flex en fila. La copia exportada no. */
+.orgv:not(.orgv--export) { container-type: inline-size; width: 100%; box-sizing: border-box; }
 .orgv:fullscreen { display: flex; flex-direction: column; border-radius: 0; }
 .orgv__barra { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 12px; border-bottom: 1px solid var(--org-line); }
 .orgv__buscar { display: inline-flex; align-items: center; gap: 8px; flex: 1 1 240px; max-width: 360px; padding: 0 10px; border: 1px solid var(--org-line); border-radius: 999px;
@@ -78,7 +82,7 @@ button.org-persona:hover { background: var(--org-hover); }
 .orgv .orgv__buscar input { font: inherit; font-size: .9rem; flex: 1; min-width: 0; padding: 8px 0; border: 0; border-radius: 0; background: none; color: var(--org-ink); outline: none; }
 .orgv__conteo { font-size: .85rem; min-width: 5ch; }
 .orgv__grupo { display: inline-flex; align-items: center; gap: 2px; margin-left: auto; padding: 2px; border: 1px solid var(--org-line); border-radius: 999px; }
-.orgv__btn { font: inherit; display: inline-grid; place-items: center; min-width: 32px; height: 32px; padding: 0 8px; border: 0; border-radius: 999px; background: none;
+.orgv__btn { box-sizing: border-box; font: inherit; display: inline-grid; place-items: center; min-width: 32px; height: 32px; padding: 0 8px; border: 0; border-radius: 999px; background: none;
   color: var(--org-ink-2); cursor: pointer; font-size: 1rem; list-style: none; }
 .orgv__btn::-webkit-details-marker, .orgv__primario::-webkit-details-marker { display: none; }
 .orgv__btn:hover { background: var(--org-hover); color: var(--org-ink); }
@@ -102,6 +106,8 @@ button.org-persona:hover { background: var(--org-hover); }
 .orgv__marca { position: sticky; left: 0; display: flex; align-items: center; gap: 12px; width: max-content; margin-bottom: 20px; padding: 10px 16px 10px 12px;
   border: 1px solid var(--org-line); border-radius: 14px; background: color-mix(in srgb, var(--org-surface) 88%, transparent); backdrop-filter: blur(6px); }
 .orgv__sello { flex: none; width: 30px; height: 30px; border-radius: 50%; box-shadow: inset 0 0 0 3px var(--org-accent); }
+/* Logo de la marca (op.logo) en lugar del sello: alto fijo, ancho según su proporción */
+.orgv__logo { flex: none; display: block; height: 30px; width: auto; max-width: 120px; object-fit: contain; }
 .orgv__marca > div { display: grid; line-height: 1.25; }
 .orgv__eyebrow { font: 500 .66rem/1.4 var(--org-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--org-accent); }
 .orgv__marca b { font-weight: 500; font-size: 1.05rem; letter-spacing: -0.01em; }
@@ -150,6 +156,19 @@ button.org-persona:hover { background: var(--org-hover); }
 .orgv__hoja.es-seleccionando .org-rama > .org-nodo:hover { outline: 2px dashed var(--org-accent); outline-offset: 3px; }
 .orgv__hoja .es-fuera { opacity: .28; filter: grayscale(.6); }
 .org-nodo.es-elegida { outline: 2px solid var(--org-accent); outline-offset: 3px; }
+/* Visor angosto (celular o columna): buscador en su línea; zoom, Descargar (solo ícono) y pantalla completa en la segunda */
+@container (max-width: 560px) {
+  .orgv__barra { gap: 8px 6px; padding: 8px 10px; }
+  .orgv__buscar { flex: 1 1 100%; max-width: none; }
+  .orgv__conteo:empty { display: none; }
+  .orgv__grupo { margin-left: 0; margin-right: auto; }
+  .orgv__btn--txt { gap: 0; padding: 0 8px; }
+  /* El menú Descargar se ancla a la barra (no al botón): ocupa su ancho y no se corta por la izquierda */
+  .orgv__barra { position: relative; }
+  .orgv__barra > .orgv__menu { position: static; }
+  .orgv__barra > .orgv__menu > .orgv__menu-panel { left: 10px; right: 10px; top: calc(100% - 4px); min-width: 0; }
+  .orgv__btn--txt > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
 @media (max-width: 900px) { .orgv__seleccion { grid-template-columns: 1fr auto; } .orgv__seleccion > .orgv__paso { grid-column: 1; } .orgv__cerrar { grid-row: 1; grid-column: 2; } }
 
 /* ── Copia para exportar: fuera de pantalla, a tamaño real, sin animaciones ── */

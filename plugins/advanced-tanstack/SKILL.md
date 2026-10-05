@@ -1,6 +1,6 @@
 ---
 name: advanced-tanstack
-description: Tablas de datos con TanStack Table (React 19 + Vite) — componente DataViews con vistas guardadas tipo Notion (pestañas) y diseños tabla, tablero kanban y tarjetas agrupadas, filtros por tipo con "y"/"o" y grupos de filtros, orden múltiple, agrupado, columnas arrastrables y redimensionables, propiedades visibles, búsqueda, paginación, acciones masivas con casillas, abrir el registro en pestaña nueva, panel lateral o modal (por vista), descarga Excel/PDF, pantalla completa, actualización automática para monitores, persistencia en localStorage, build Vite commiteado y montado en una vista Razor. Antes de implementar pregunta si se mueven registros arrastrando (y entonces qué acción desencadena y con qué condiciones), si se permiten acciones masivas (cuáles, a qué registros y con qué confirmación) y de dónde toma el estilo (tema por defecto incluido en la skill, el de la página u otra fuente); siempre solo lectura por registro, y diseños, segmentos y herramientas los elige el usuario en Configuración. Úsala siempre que el usuario pida TanStack, tabla de datos, grilla, "vistas tipo Notion", DataViews, tablero/kanban de registros, "tablero agrupado con tarjetas", filtros y orden guardados, exportar una tabla a Excel o PDF, una pantalla de monitoreo que se actualiza sola, o reemplazar una tabla jQuery/DataTables, aunque no mencione esta skill. Tema por defecto propio en assets/default-theme.
+description: Tablas de datos con TanStack Table (React 19 + Vite) — componente DataViews con vistas guardadas tipo Notion (pestañas) y diseños tabla, tablero kanban y tarjetas agrupadas, filtros por tipo con "y"/"o" y grupos de filtros, orden múltiple, agrupado, columnas arrastrables y redimensionables, propiedades visibles, búsqueda, paginación, acciones masivas con casillas, abrir el registro en pestaña nueva, panel lateral o modal (por vista), descarga Excel/PDF, pantalla completa, actualización automática para monitores, persistencia en localStorage, build Vite commiteado y montado en una vista Razor. Antes de implementar pregunta si se mueven registros arrastrando (y entonces qué acción desencadena y con qué condiciones), si se permiten acciones masivas (cuáles, a qué registros y con qué confirmación) qué estilo toma (los colores de la página donde se despliega, el predeterminado compartido o los opcionales Cálido y Pizarra) y qué marca y logo lleva (los de la página o los que indique el usuario); siempre solo lectura por registro, y diseños, segmentos y herramientas los elige el usuario en Configuración. Úsala siempre que el usuario pida TanStack, tabla de datos, grilla, "vistas tipo Notion", DataViews, tablero/kanban de registros, "tablero agrupado con tarjetas", filtros y orden guardados, exportar una tabla a Excel o PDF, una pantalla de monitoreo que se actualiza sola, o reemplazar una tabla jQuery/DataTables, aunque no mencione esta skill. Estilo predeterminado compartido (y opcionales Cálido y Pizarra) en assets/default-theme.
 ---
 
 # Advanced TanStack / DataViews
@@ -89,7 +89,7 @@ arrastrables y redimensionables, copia rápida (`copy: true` en el campo).
 
 ## Antes de implementar: preguntar (AskUserQuestion)
 
-**Siempre**, aunque el pedido no lo pida (también en demos y prototipos): una sola llamada con estas 3 preguntas,
+**Siempre**, aunque el pedido no lo pida (también en demos y prototipos): una sola llamada con estas 4 preguntas,
 salvo las que el pedido ya responda (si no hay preferencia, la opción A). Diseños, segmentos y herramientas
 **no** se preguntan: el usuario los elige en Configuración (menú «…» de las pestañas) y Agrupar. Las **acciones por
 registro tampoco**: siempre solo lectura (el título es el enlace al detalle); Editar/Eliminar (`rowActions`,
@@ -123,13 +123,21 @@ puede mostrar el detalle (un modal o formulario propio), pasar `onOpenRecord` y 
    - **¿Confirmación?** Las destructivas (suspender, eliminar) piden confirmación con un modal de la página; las que piden
      un dato (cambiar rol, mover a) abren un formulario. Todo en `run`: resolver con el aviso a mostrar; rechazar con el
      error (o con `null` si el usuario cancela). Necesitan endpoints de escritura con la política de gestión.
-3. **¿Qué estilo toma la tabla?** A: **tema por defecto** (`assets/default-theme/`: `theme-tokens.css` + `head.html`,
-   el tema propio de la skill, + `dataviews-tokens.css`; Estilo trae tema del espacio de trabajo y alto
-   contraste). B: **analizar el estilo actual de la página**: leer su
-   CSS (variables, Bootstrap, colores de marca, radios, fuente) y escribir un `dataviews-tokens.css` propio que apunte
-   cada `--c-*` a lo que ya usa la app; sin default-theme, Estilo muestra solo Lectura. C: **otra fuente de tema**
-   (archivo CSS, design system, URL o paleta que indique el usuario): mismo mapeo de `--c-*` desde esa fuente. En B y C,
-   revisar contraste ≥ 4.5:1 de texto y estados contra su fondo antes de entregar.
+3. **¿Qué estilo toma la tabla?** Antes de preguntar, revisar si la página donde se despliega tiene estilo propio
+   (variables CSS, Bootstrap personalizado, colores de marca) y decirlo en la pregunta. A: **los colores de la página
+   donde se despliega** (recomendado si los tiene): leer su CSS (variables, Bootstrap, colores de marca, radios, fuente)
+   y escribir un `dataviews-tokens.css` propio que apunte cada `--c-*` a lo que ya usa la app; sin default-theme,
+   Estilo muestra solo Lectura. B: **Predeterminado**, el estilo compartido de claude-tools (`assets/default-theme/`:
+   `theme-tokens.css` + `head.html` + `dataviews-tokens.css`; neutro gris y azul; Estilo trae tema del espacio de trabajo
+   y alto contraste). C: **Cálido** (B + `assets/default-theme/estilos/calido.css`: arena y terracota). D: **Pizarra**
+   (B + `estilos/pizarra.css`: gris pizarra y verde azulado). Otra fuente (archivo CSS, design system, URL o paleta que
+   indique el usuario) va por "Other": mismo mapeo de `--c-*` desde esa fuente. Si la página no tiene estilo propio y
+   no hay preferencia, B. En A y en otra fuente, revisar contraste ≥ 4.5:1 de texto y estados contra su fondo.
+4. **¿Qué marca y logo lleva?** Solo si la pantalla muestra marca (encabezado de `Tablero.cshtml`, título de la
+   descarga). Antes de preguntar, buscar si la página ya tiene marca: nombre de la app o empresa en el layout y archivo
+   de logo en los estáticos. A: **la de la página** (lo encontrado). B: **la que indique el usuario**: nombre, color
+   principal (reemplaza `--dt-brand*` y `--dt-logo-bg`, con contraste revisado) y ruta o URL del logo. C: sin marca.
+   Nunca inventar ni dar por hecho un nombre, color o logo que no esté en la página o que no indique el usuario.
 
 Sin preguntar, se deduce del proyecto:
 
@@ -169,9 +177,11 @@ grupo tiene registros. Error frecuente: escrituras que solo piden la política d
 5. **Vista Razor**: `assets/Vista.cshtml` (o `assets/screen/Tablero.cshtml` para monitoreo): link css +
    `div#dataviews-root` con `data-*` + script `type="module"`, versionados, y `scrollbar-gutter: stable`.
    Guardar con BOM.
-6. **Tokens** (según la pregunta 3): el CSS usa solo tokens `--c-*`. Tema por defecto: copiar `assets/default-theme/`
-   al proyecto, cargar su `theme-tokens.css`, pegar su `head.html` arriba en el `<head>` del layout (reemplazar
-   `__STORAGE_KEY__`, `__LEGACY_KEY__`, `__USE_PREF__`) y `assets/dataviews-tokens.css` después de los tokens. Estilo de la página u otra fuente: copiar
+6. **Tokens** (según la pregunta 3): el CSS usa solo tokens `--c-*`. Predeterminado, Cálido o Pizarra: copiar
+   `assets/default-theme/` al proyecto, cargar su `theme-tokens.css` (y después `estilos/calido.css` o
+   `estilos/pizarra.css` si se eligió), pegar su `head.html` arriba en el `<head>` del layout (reemplazar
+   `__STORAGE_KEY__`, `__LEGACY_KEY__`, `__USE_PREF__`) y `assets/dataviews-tokens.css` después de los tokens. Marca
+   propia (pregunta 4): sus `--dt-brand*` y `--dt-logo-bg` en un CSS cargado al final; logo en `ViewData["Logo"]`. Estilo de la página u otra fuente: copiar
    `dataviews-tokens.css` y reemplazar cada `var(--dt-*)` por la variable o color de esa fuente (también en modo oscuro
    si la app lo tiene). Estilo vive en el menú «…» de cada vista y se aplica en el contenedor desde el primer pintado: no
    necesita script en el `<head>`, ni lugar en la página, ni toca el tema del resto de la app.
@@ -249,7 +259,8 @@ grupo tiene registros. Error frecuente: escrituras que solo piden la política d
 | `assets/Vista.cshtml` | Vista Razor que carga el build |
 | `assets/screen/Tablero.cshtml` | Vista Razor de monitoreo: título, indicador y frecuencia |
 | `assets/screen/board-header.js`, `board-tools.css` | Actualización automática (tokens `--dt-*`) |
-| `assets/default-theme/theme-tokens.css`, `head.html` | Tema por defecto de la skill: tokens `--dt-*` claro/oscuro/daltonismo/alto contraste, también por elemento con `.dt-thp`, y script del `<head>` |
+| `assets/default-theme/theme-tokens.css`, `head.html` | Estilo predeterminado compartido de claude-tools (copia de `shared/default-theme/`, no editar aquí): tokens `--dt-*` claro/oscuro/daltonismo/alto contraste, también por elemento con `.dt-thp`, y script del `<head>` |
+| `assets/default-theme/estilos/calido.css`, `pizarra.css` | Estilos opcionales (Cálido, Pizarra): cargar después de `theme-tokens.css` |
 | `assets/dataviews-tokens.css` | Alias `--c-*` → `--dt-*` para el tema por defecto (default-theme) |
 | `references/config.md` | Build, props, `ViewConfig`, filtros, TanStack, vistas, descarga, estilos, a11y, tests |
 | `examples/demo/` | Ejemplo completo aplicado desde cero (solo lectura, tema por defecto): `demo.html` armado, su `main.tsx` y `build.py` |

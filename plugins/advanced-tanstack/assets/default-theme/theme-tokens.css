@@ -1,5 +1,7 @@
 /* ============================================================================
-   default-theme · Tokens de tema del "tema por defecto" de advanced-tanstack
+   default-theme · Estilo predeterminado compartido de claude-tools (advanced-tanstack, organigrama y skills futuras).
+   Fuente única: shared/default-theme/ en la raíz del repo; scripts/sync-default-theme.py lo copia a cada plugin.
+   Estilos opcionales: estilos/calido.css o estilos/pizarra.css, cargados DESPUÉS de este archivo.
    <html data-theme="light|dark" data-vision="default|colorblind|tritanopia"
          data-contrast="default|high" data-font="roboto|atkinson|lexend|system">
    Lo fija el script del <head> (default-theme/head.html) desde localStorage.
@@ -13,8 +15,8 @@
      Marca     --dt-brand (texto/íconos/bordes de acento, ≥4.5:1)
                --dt-brand-emphasis (fondos rellenos con texto blanco, ≥4.5:1)
                --dt-brand-strong (hover/degradados) --dt-brand-subtle (tintes) --dt-brand-ghost
-               --dt-accent (dorado) --dt-accent-2 (coral) → SOLO decorativos, nunca texto
-               --dt-logo-bg (cuadro del logo, siempre el azul de marca) --dt-focus-ring
+               --dt-accent --dt-accent-2 → SOLO decorativos, nunca texto
+               --dt-logo-bg (fondo del cuadro del logo, el color de marca de la app) --dt-focus-ring
      Semánt.   --dt-success --dt-warning --dt-danger --dt-info (+ -bg)
      Estados   --dt-state-new --dt-state-active --dt-state-waiting --dt-state-pending
                --dt-state-done --dt-state-canceled --dt-state-extra (+ -bg)
@@ -52,49 +54,49 @@ html.theme-anim .dt-no-theme-anim, html.theme-anim .dt-no-theme-anim * { transit
 /* ── Claro (GitHub light default) ── */
 :root, .dt-thp[data-theme="light"] {
     color-scheme: light;
-    /* Marca: emphasis #002F5D = azul de marca para fondos con texto blanco; brand #3A57E8 = enlaces y acentos (5.7:1);
-       light #D9EBFA = celeste para tintes; accent dorado y accent-2 coral = solo decorativos (no texto). */
-    --dt-brand: #3a57e8; --dt-brand-emphasis: #002f5d; --dt-brand-strong: #1a3b66; --dt-brand-subtle: #d9ebfa; --dt-brand-ghost: rgba(58, 87, 232, .08);
-    --dt-accent: #d6a419; --dt-accent-2: #e97f7f; --dt-logo-bg: #002f5d;
-    --dt-bg: #eef1f5; --dt-surface: #ffffff; --dt-surface-2: #f5f7fa; --dt-border: #d5dde6; --dt-border-strong: #b5c0cc;
-    --dt-text: #0b1c2e; --dt-text-body: #26323f; --dt-text-muted: #48545f; --dt-text-faint: #6b7a88;
-    --dt-focus-ring: 0 0 0 3px rgba(58, 87, 232, .3);
+    /* Marca neutra (azul genérico): brand #0969DA = enlaces y acentos (5.2:1); emphasis #0550AE = fondos con texto blanco
+       (7.6:1); subtle #DDF4FF = tintes; accent y accent-2 = solo decorativos (no texto). Para la marca de una app,
+       reemplazar los --dt-brand-*, --dt-accent* y --dt-logo-bg (y revisar contraste). */
+    --dt-brand: #0969da; --dt-brand-emphasis: #0550ae; --dt-brand-strong: #033d8b; --dt-brand-subtle: #ddf4ff; --dt-brand-ghost: rgba(9, 105, 218, .08);
+    --dt-accent: #bf8700; --dt-accent-2: #8250df; --dt-logo-bg: #0550ae;
+    --dt-bg: #f6f8fa; --dt-surface: #ffffff; --dt-surface-2: #f6f8fa; --dt-border: #d1d9e0; --dt-border-strong: #afb8c1;
+    --dt-text: #1f2328; --dt-text-body: #2f353c; --dt-text-muted: #59636e; --dt-text-faint: #6e7781;
+    --dt-focus-ring: 0 0 0 3px rgba(9, 105, 218, .3);
 
     /* Semánticos y estados (visión estándar) */
     --dt-success: #1a7f37; --dt-success-bg: #dafbe1;
     --dt-warning: #9a6700; --dt-warning-bg: #fff8c5;
     --dt-danger: #d1242f;  --dt-danger-bg: #ffebe9;
-    --dt-info: #3a57e8;    --dt-info-bg: #d9ebfa;
+    --dt-info: #0969da;    --dt-info-bg: #ddf4ff;
     --dt-state-new: #d1242f;     --dt-state-new-bg: #ffebe9;
     --dt-state-active: #bc4c00;     --dt-state-active-bg: #fff1e5;
     --dt-state-waiting: #9a6700;    --dt-state-waiting-bg: #fff8c5;
     --dt-state-pending: #0969da; --dt-state-pending-bg: #ddf4ff;
     --dt-state-done: #1a7f37;  --dt-state-done-bg: #dafbe1;
-    --dt-state-canceled: #48545f; --dt-state-canceled-bg: #f5f7fa;
+    --dt-state-canceled: #59636e; --dt-state-canceled-bg: #f6f8fa;
     --dt-state-extra: #8250df;     --dt-state-extra-bg: #fbefff;
 }
 
 /* ── Oscuro (GitHub dark default) ── */
 :root[data-theme="dark"], .dt-thp[data-theme="dark"] {
     color-scheme: dark;
-    /* Fondo marino (#0B1C2E) en vez del casi negro de GitHub; acento lavanda
-       (#7B97EA para texto, 5.6:1; #3A57E8 para fondos con texto blanco, 5.7:1). */
-    --dt-brand: #7b97ea; --dt-brand-emphasis: #3a57e8; --dt-brand-strong: #a9bcf3; --dt-brand-subtle: #1a3257; --dt-brand-ghost: rgba(90, 125, 225, .16);
-    --dt-accent: #e0b43a; --dt-accent-2: #e97f7f; --dt-logo-bg: #1a3b66;
-    --dt-bg: #0b1c2e; --dt-surface: #10243a; --dt-surface-2: #081624; --dt-border: #1f3a58; --dt-border-strong: #2b4a6d;
-    --dt-text: #eef3f9; --dt-text-body: #cdd7e3; --dt-text-muted: #9aabbf; --dt-text-faint: #7f92a8;
-    --dt-focus-ring: 0 0 0 3px rgba(123, 151, 234, .4);
+    /* Acento azul claro (#4493F8 para texto, 5.6:1 sobre la superficie; #1F6FEB para fondos con texto blanco, 4.6:1). */
+    --dt-brand: #4493f8; --dt-brand-emphasis: #1f6feb; --dt-brand-strong: #79c0ff; --dt-brand-subtle: #121d2f; --dt-brand-ghost: rgba(68, 147, 248, .16);
+    --dt-accent: #d29922; --dt-accent-2: #ab7df8; --dt-logo-bg: #1f6feb;
+    --dt-bg: #0d1117; --dt-surface: #151b23; --dt-surface-2: #010409; --dt-border: #3d444d; --dt-border-strong: #656c76;
+    --dt-text: #f0f6fc; --dt-text-body: #d1d7e0; --dt-text-muted: #9198a1; --dt-text-faint: #8b949e;
+    --dt-focus-ring: 0 0 0 3px rgba(68, 147, 248, .4);
 
     --dt-success: #3fb950; --dt-success-bg: #183c3e;
     --dt-warning: #d29922; --dt-warning-bg: #2f3736;
     --dt-danger: #f85149;  --dt-danger-bg: #352b3c;
-    --dt-info: #7b97ea;    --dt-info-bg: #1a3257;
+    --dt-info: #4493f8;    --dt-info-bg: #121d2f;
     --dt-state-new: #f85149;     --dt-state-new-bg: #352b3c;
     --dt-state-active: #db6d28;     --dt-state-active-bg: #303037;
     --dt-state-waiting: #d29922;    --dt-state-waiting-bg: #2f3736;
     --dt-state-pending: #4493f8; --dt-state-pending-bg: #183658;
     --dt-state-done: #3fb950;  --dt-state-done-bg: #183c3e;
-    --dt-state-canceled: #9aabbf; --dt-state-canceled-bg: #16304b;
+    --dt-state-canceled: #9198a1; --dt-state-canceled-bg: #212830;
     --dt-state-extra: #ab7df8;     --dt-state-extra-bg: #293258;
 }
 
@@ -152,18 +154,18 @@ html.theme-anim .dt-no-theme-anim, html.theme-anim .dt-no-theme-anim * { transit
 /* ── Alto contraste (data-contrast="high"), como los temas "high contrast" de GitHub ──
    Neutros, marca y bordes a ≥ 7:1 (AAA) sobre la superficie; se combina con claro/oscuro y con daltonismo. */
 :root[data-theme="light"][data-contrast="high"], .dt-thp[data-theme="light"][data-contrast="high"] {
-    --dt-bg: #ffffff; --dt-surface: #ffffff; --dt-surface-2: #e8edf3; --dt-border: #59636e; --dt-border-strong: #20252c;
-    --dt-text: #0b1c2e; --dt-text-body: #0b1c2e; --dt-text-muted: #26323f; --dt-text-faint: #48545f;
-    --dt-brand: #1f3aa8; --dt-brand-emphasis: #002f5d; --dt-brand-strong: #002f5d; --dt-brand-subtle: #d9ebfa;
-    --dt-focus-ring: 0 0 0 3px #1f3aa8;
-    --dt-state-canceled: #26323f;
+    --dt-bg: #ffffff; --dt-surface: #ffffff; --dt-surface-2: #e6eaef; --dt-border: #59636e; --dt-border-strong: #20252c;
+    --dt-text: #0e1116; --dt-text-body: #0e1116; --dt-text-muted: #25292e; --dt-text-faint: #454c54;
+    --dt-brand: #0349b4; --dt-brand-emphasis: #033d8b; --dt-brand-strong: #033d8b; --dt-brand-subtle: #dff7ff; --dt-logo-bg: #033d8b;
+    --dt-focus-ring: 0 0 0 3px #0349b4;
+    --dt-state-canceled: #25292e;
 }
 :root[data-theme="dark"][data-contrast="high"], .dt-thp[data-theme="dark"][data-contrast="high"] {
-    --dt-bg: #050d17; --dt-surface: #0b1c2e; --dt-surface-2: #000000; --dt-border: #8fa3bb; --dt-border-strong: #d6dee8;
-    --dt-text: #ffffff; --dt-text-body: #f0f4f9; --dt-text-muted: #d6dee8; --dt-text-faint: #aebdd0;
-    --dt-brand: #b4c6f7; --dt-brand-emphasis: #2a45c7; --dt-brand-strong: #d6e0fb; --dt-brand-subtle: #1a3257;
-    --dt-focus-ring: 0 0 0 3px #b4c6f7;
-    --dt-state-canceled: #d6dee8;
+    --dt-bg: #010409; --dt-surface: #0d1117; --dt-surface-2: #000000; --dt-border: #9198a1; --dt-border-strong: #d1d7e0;
+    --dt-text: #ffffff; --dt-text-body: #f0f6fc; --dt-text-muted: #d1d7e0; --dt-text-faint: #b7bdc8;
+    --dt-brand: #91cbff; --dt-brand-emphasis: #194fb1; --dt-brand-strong: #cae8ff; --dt-brand-subtle: #12253f; --dt-logo-bg: #194fb1;
+    --dt-focus-ring: 0 0 0 3px #91cbff;
+    --dt-state-canceled: #d1d7e0;
 }
 /* Estados y semánticos a ≥ 7:1: mismo tono de cada paleta (estándar/daltonismo), solo más oscuro (claro) o más claro (oscuro). */
 :root[data-theme="light"][data-contrast="high"][data-vision="default"], .dt-thp[data-theme="light"][data-contrast="high"][data-vision="default"] { /* mín. 7.3:1 */
@@ -176,7 +178,7 @@ html.theme-anim .dt-no-theme-anim, html.theme-anim .dt-no-theme-anim * { transit
     --dt-success: #14632b;
     --dt-warning: #754e00;
     --dt-danger: #a71d26;
-    --dt-info: #1f3aa8;
+    --dt-info: #0349b4;
 }
 :root[data-theme="light"][data-contrast="high"][data-vision="colorblind"], .dt-thp[data-theme="light"][data-contrast="high"][data-vision="colorblind"] { /* mín. 7.2:1 · ΔE ≥ 19 entre estados (optimize_states.py) */
     --dt-state-new: #6f251d;
@@ -188,7 +190,7 @@ html.theme-anim .dt-no-theme-anim, html.theme-anim .dt-no-theme-anim * { transit
     --dt-success: #0754ae;
     --dt-warning: #754e00;
     --dt-danger: #933b00;
-    --dt-info: #1f3aa8;
+    --dt-info: #0349b4;
 }
 :root[data-theme="light"][data-contrast="high"][data-vision="tritanopia"], .dt-thp[data-theme="light"][data-contrast="high"][data-vision="tritanopia"] { /* mín. 7.2:1 · ΔE ≥ 19 entre estados (optimize_states.py) */
     --dt-state-new: #6f251d;
@@ -200,7 +202,7 @@ html.theme-anim .dt-no-theme-anim, html.theme-anim .dt-no-theme-anim * { transit
     --dt-success: #0754ae;
     --dt-warning: #933b00;
     --dt-danger: #a71d26;
-    --dt-info: #1f3aa8;
+    --dt-info: #0349b4;
 }
 :root[data-theme="dark"][data-contrast="high"][data-vision="default"], .dt-thp[data-theme="dark"][data-contrast="high"][data-vision="default"] { /* mín. 7.2:1 */
     --dt-state-new: #fa8983;
@@ -212,7 +214,7 @@ html.theme-anim .dt-no-theme-anim, html.theme-anim .dt-no-theme-anim * { transit
     --dt-success: #4ebf5e;
     --dt-warning: #d59f2f;
     --dt-danger: #fa8983;
-    --dt-info: #b4c6f7;
+    --dt-info: #91cbff;
 }
 :root[data-theme="dark"][data-contrast="high"][data-vision="colorblind"], .dt-thp[data-theme="dark"][data-contrast="high"][data-vision="colorblind"] { /* mín. 7.2:1 */
     --dt-state-new: #fd8685;
@@ -224,7 +226,7 @@ html.theme-anim .dt-no-theme-anim, html.theme-anim .dt-no-theme-anim * { transit
     --dt-success: #62abff;
     --dt-warning: #d59f2f;
     --dt-danger: #e59664;
-    --dt-info: #b4c6f7;
+    --dt-info: #91cbff;
 }
 :root[data-theme="dark"][data-contrast="high"][data-vision="tritanopia"], .dt-thp[data-theme="dark"][data-contrast="high"][data-vision="tritanopia"] { /* mín. 7.2:1 */
     --dt-state-new: #fd8685;
@@ -236,7 +238,7 @@ html.theme-anim .dt-no-theme-anim, html.theme-anim .dt-no-theme-anim * { transit
     --dt-success: #62abff;
     --dt-warning: #e59664;
     --dt-danger: #fa8983;
-    --dt-info: #b4c6f7;
+    --dt-info: #91cbff;
 }
 
 :root[data-contrast="high"] :focus-visible, .dt-thp[data-contrast="high"] :focus-visible { outline: 3px solid var(--dt-brand) !important; outline-offset: 2px !important; }

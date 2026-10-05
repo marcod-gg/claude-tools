@@ -1,6 +1,9 @@
 /* Encabezado del tablero (título + herramientas) y herramientas junto al título: actualización · pantalla completa. */
 .board-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
 .board-head__title { margin: 0 0 4px; font-size: 1.5rem; color: var(--dt-text); }
+/* Logo de la marca (ViewData["Logo"], opcional): alto fijo, ancho según su proporción */
+.board-head__brand { display: flex; align-items: center; gap: 12px; }
+.board-head__logo { display: block; height: 40px; width: auto; max-width: 160px; object-fit: contain; }
 .board-head__sub { margin: 0; color: var(--dt-text-muted); }
 
 .board-tools {

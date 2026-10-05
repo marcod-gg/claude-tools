@@ -1,0 +1,8 @@
+/* Alias --org-* → --dt-* para usar el organigrama con el estilo compartido (default-theme, tokens --dt-*).
+   Cargar después de default-theme/theme-tokens.css (y del estilo opcional, si hay) y de organigrama.css. */
+:root, .dt-thp {
+  --org-bg: var(--dt-bg); --org-surface: var(--dt-surface); --org-hover: var(--dt-surface-2); --org-line: var(--dt-border);
+  --org-ink: var(--dt-text); --org-ink-2: var(--dt-text-body); --org-muted: var(--dt-text-muted);
+  --org-accent: var(--dt-brand); --org-on-accent: var(--dt-surface);
+  --org-radius: var(--dt-r-lg); --org-shadow: var(--dt-shadow-lg); --org-mono: var(--dt-font-mono);
+}

@@ -1,0 +1,36 @@
+/* ============================================================================
+   default-theme · Estilo opcional "Cálido": arena y terracota.
+   Cargar DESPUÉS de theme-tokens.css. Solo cambia neutros, marca y acentos (claro, oscuro y alto contraste);
+   semánticos, estados y daltonismo siguen los del estilo predeterminado.
+   ============================================================================ */
+
+:root, .dt-thp[data-theme="light"] {
+    --dt-brand: #a6461f; --dt-brand-emphasis: #8a3a1a; --dt-brand-strong: #6e2e14; --dt-brand-subtle: #f7e6dc; --dt-brand-ghost: rgba(166, 70, 31, .08);
+    --dt-accent: #c48a1b; --dt-accent-2: #6b8f71; --dt-logo-bg: #8a3a1a;
+    --dt-bg: #f8f5f1; --dt-surface: #ffffff; --dt-surface-2: #f3eee8; --dt-border: #e0d6cb; --dt-border-strong: #c2b4a5;
+    --dt-text: #1f1a16; --dt-text-body: #352d27; --dt-text-muted: #6a5d52; --dt-text-faint: #7a6c60;
+    --dt-focus-ring: 0 0 0 3px rgba(166, 70, 31, .3);
+    --dt-state-canceled: #6a5d52; --dt-state-canceled-bg: #f3eee8;
+}
+:root[data-theme="dark"], .dt-thp[data-theme="dark"] {
+    --dt-brand: #e58a5f; --dt-brand-emphasis: #a6461f; --dt-brand-strong: #f2b08f; --dt-brand-subtle: #33221a; --dt-brand-ghost: rgba(229, 138, 95, .16);
+    --dt-accent: #d9a441; --dt-accent-2: #8fb996; --dt-logo-bg: #a6461f;
+    --dt-bg: #14110e; --dt-surface: #1d1915; --dt-surface-2: #0e0c0a; --dt-border: #3a322b; --dt-border-strong: #5c5046;
+    --dt-text: #f6efe7; --dt-text-body: #ded3c7; --dt-text-muted: #ab9d90; --dt-text-faint: #9a8c7f;
+    --dt-focus-ring: 0 0 0 3px rgba(229, 138, 95, .4);
+    --dt-state-canceled: #ab9d90; --dt-state-canceled-bg: #26211c;
+}
+:root[data-theme="light"][data-contrast="high"], .dt-thp[data-theme="light"][data-contrast="high"] {
+    --dt-bg: #ffffff; --dt-surface: #ffffff; --dt-surface-2: #efe8e0; --dt-border: #6a5d52; --dt-border-strong: #2a231e;
+    --dt-text: #120e0b; --dt-text-body: #120e0b; --dt-text-muted: #2e2620; --dt-text-faint: #4a3f36;
+    --dt-brand: #7a2f12; --dt-brand-emphasis: #6e2e14; --dt-brand-strong: #5a240e; --dt-brand-subtle: #f7e6dc; --dt-logo-bg: #6e2e14;
+    --dt-focus-ring: 0 0 0 3px #7a2f12;
+    --dt-state-canceled: #2e2620;
+}
+:root[data-theme="dark"][data-contrast="high"], .dt-thp[data-theme="dark"][data-contrast="high"] {
+    --dt-bg: #0a0806; --dt-surface: #14110e; --dt-surface-2: #000000; --dt-border: #a89a8d; --dt-border-strong: #e3d9ce;
+    --dt-text: #ffffff; --dt-text-body: #f8f2ec; --dt-text-muted: #e3d9ce; --dt-text-faint: #c7b9ab;
+    --dt-brand: #f5b48f; --dt-brand-emphasis: #8a3a1a; --dt-brand-strong: #fbd5bf; --dt-brand-subtle: #33221a; --dt-logo-bg: #8a3a1a;
+    --dt-focus-ring: 0 0 0 3px #f5b48f;
+    --dt-state-canceled: #e3d9ce;
+}

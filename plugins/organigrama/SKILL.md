@@ -1,12 +1,12 @@
 ---
 name: organigrama
-description: Organigramas interactivos para apps web con datos reales, sin dependencias — por jefatura directa de las personas, de equipos anidados (áreas y transversales como comités o sindicatos) y el organigrama interno de un equipo. Visor con marca de agua ("Organigrama <Empresa> por <Producto> · <Marca>"), zoom (botones, Ctrl+rueda, ajustar al ancho), buscador por nombre/cargo/equipo, arrastre para moverse, pantalla completa y descarga PNG/PDF de todo o de una parte (descendente, ascendente, ascendente con pares), con animaciones y modo oscuro. Incluye el modelo opcional de Postgres/Supabase para jefaturas, cargos y equipos anidados sin ciclos con integrantes heredados. Antes de implementar pregunta qué organigramas, qué pasa al hacer clic, la firma de la marca de agua y de dónde toma el estilo. Úsala siempre que el usuario pida un organigrama, jerarquía de personas, "quién reporta a quién", estructura de equipos o áreas, árbol de cargos, jefaturas, equipos anidados o descargar el organigrama, aunque no nombre esta skill.
+description: Organigramas interactivos para apps web con datos reales, sin dependencias — por jefatura directa de las personas, de equipos anidados (áreas y transversales como comités o sindicatos) y el organigrama interno de un equipo. Visor con marca de agua ("Organigrama <Empresa> por <Producto> · <Marca>"), zoom (botones, Ctrl+rueda, ajustar al ancho), buscador por nombre/cargo/equipo, arrastre para moverse, pantalla completa y descarga PNG/PDF de todo o de una parte (descendente, ascendente, ascendente con pares), con animaciones y modo oscuro. Incluye el modelo opcional de Postgres/Supabase para jefaturas, cargos y equipos anidados sin ciclos con integrantes heredados. Antes de implementar pregunta qué organigramas, qué pasa al hacer clic, la marca (firma y logo de la marca de agua: la que ya tiene la página o la que indique el usuario) y qué estilo toma (los colores de la página donde se despliega, el predeterminado compartido o los opcionales Cálido y Pizarra). Úsala siempre que el usuario pida un organigrama, jerarquía de personas, "quién reporta a quién", estructura de equipos o áreas, árbol de cargos, jefaturas, equipos anidados o descargar el organigrama, aunque no nombre esta skill.
 ---
 
 # Organigrama
 
 Un módulo ES sin dependencias (`assets/organigrama.js`), su CSS con tokens (`assets/organigrama.css`) y un modelo de datos
-opcional (`assets/sql/`). Nació en el portal de clientes de Nexus (Fractional IT); aquí queda genérico.
+opcional (`assets/sql/`). Genérico: sin marca propia; colores por defecto neutros.
 
 | Pieza | Para qué |
 |---|---|
@@ -15,8 +15,8 @@ opcional (`assets/sql/`). Nació en el portal de clientes de Nexus (Fractional I
 | `arbolEquipos(equipos)` | Ruta (migas), subequipos e integrantes heredados (un equipo incluye a sus subequipos) |
 | `visorOrganigrama(contenido, op)` | Marca de agua, zoom, buscador, arrastre, pantalla completa, descargas |
 
-API completa, formas de datos y tokens: `references/api.md`. Ejemplo funcionando: `examples/demo/index.html`
-(servir por HTTP: `python -m http.server` desde la raíz del plugin y abrir `/examples/demo/`).
+API completa, formas de datos y tokens: `references/api.md`. Ejemplo funcionando: `examples/demo/demo.html`
+(abre con doble clic; lo arma `examples/demo/build.py` desde `index.html`, que necesita HTTP porque carga el módulo ES).
 
 ## Cuándo sí / cuándo no
 
@@ -51,11 +51,19 @@ Una sola llamada con estas preguntas, salvo las que el pedido ya responda (sin p
    en cada una (el organigrama primero).
 2. **¿Qué pasa al hacer clic en una persona o equipo?** A: abre su ficha en un **panel lateral** (vista previa sin
    perder el organigrama). B: modal. C: enlace a su página. D: nada (solo consulta).
-3. **¿Qué firma lleva la marca de agua?** A: "por <producto> · <empresa que lo provee>" (deducir de la app; en Nexus,
-   "por Nexus · Fractional IT"). B: sin firma (solo "Organigrama <Empresa>"). C: otro texto.
-4. **¿Qué estilo toma?** A: **el de la página**: leer su CSS (variables, colores de marca, radios, fuente) y apuntar cada
-   `--org-*` a lo que ya usa. B: los valores por defecto del CSS (terracota y crema, con modo oscuro). C: otra fuente que
-   indique el usuario. En A y C revisar contraste ≥ 4.5:1 de texto y estados sobre su fondo en claro y oscuro.
+3. **¿Qué marca lleva la marca de agua (firma y logo)?** Antes de preguntar, revisar si la página ya tiene marca
+   (nombre del producto y de la empresa en el layout o la topbar, archivo de logo en los estáticos) y mostrar lo encontrado.
+   A: **la de la página**: firma "por <producto> · <empresa>" y su logo (`logo`) si lo hay. B: **la que indique el
+   usuario**: texto de la firma y ruta o URL del logo. C: sin marca (solo "Organigrama <Empresa>", con el sello neutro).
+   Nunca inventar ni dar por hecho un nombre o logo que no esté en la página o que no indique el usuario.
+4. **¿Qué estilo toma?** Antes de preguntar, revisar si la página donde se despliega tiene estilo propio y decirlo.
+   A: **los colores de la página donde se despliega** (recomendado si los tiene): leer su CSS (variables, colores de
+   marca, radios, fuente) y apuntar cada `--org-*` a lo que ya usa. B: **Predeterminado**, el estilo compartido de
+   claude-tools (`assets/default-theme/` + `assets/organigrama-tokens.css`; neutro gris y azul, con oscuro, daltonismo
+   y alto contraste). C: **Cálido** (B + `default-theme/estilos/calido.css`: arena y terracota). D: **Pizarra**
+   (B + `estilos/pizarra.css`: gris pizarra y verde azulado). Otra fuente (paleta, design system, URL) va por "Other".
+   Si la página no tiene estilo propio y no hay preferencia, B. En A y en otra fuente revisar contraste ≥ 4.5:1 de
+   texto y estados sobre su fondo en claro y oscuro.
 
 Sin preguntar, se deduce del proyecto:
 
@@ -70,10 +78,14 @@ Sin preguntar, se deduce del proyecto:
 
 1. **Copiar** `assets/organigrama.js` y `assets/organigrama.css` a los estáticos del proyecto (sin build: es un módulo ES).
    Si la app usa un bundler, importarlo desde ahí.
-2. **Tokens** (pregunta 4): en el `:root` del sitio apuntar los `--org-*` a sus variables (`references/api.md`).
+2. **Tokens** (pregunta 4): colores de la página → en el `:root` del sitio apuntar los `--org-*` a sus variables
+   (`references/api.md`). Predeterminado, Cálido o Pizarra → copiar `assets/default-theme/`, pegar su `head.html` arriba
+   en el `<head>` (reemplazar `__STORAGE_KEY__`, `__LEGACY_KEY__`, `__USE_PREF__`) y cargar en orden `theme-tokens.css`,
+   el estilo opcional si se eligió, `organigrama.css` y `organigrama-tokens.css`. Sin cargar nada de eso,
+   `organigrama.css` trae los mismos neutros del predeterminado como respaldo (oscuro según el sistema).
 3. **Datos**: mapear al formato de personas `{ id, nombre, cargo, jefeId, email }` y equipos `{ id, nombre, padreId, tipo, integrantes }`.
    Si falta jefatura, cargo o anidamiento, aplicar el SQL (paso opcional, con migración y su archivo en el repo).
-4. **Montar**: `contenedor.replaceChildren(visorOrganigrama(organigramaPersonas(activos, { onPersona }), { nombre, firma, avisar }))`.
+4. **Montar**: `contenedor.replaceChildren(visorOrganigrama(organigramaPersonas(activos, { onPersona }), { nombre, firma, logo, avisar }))`.
    Página de un equipo: ruta con `arbolEquipos(e).ruta(id)`, subequipos con `.hijos.get(id)` y su organigrama interno.
 5. **Editar jefaturas y equipos**: ficha de la persona con Cargo y Jefatura directa (select de miembros activos, sin la propia persona)
    y equipos como multiselect con sangría por nivel (`orden`). El servidor valida ciclos y permisos.
@@ -102,6 +114,9 @@ Sin preguntar, se deduce del proyecto:
   árbol (los nodos de equipo y la página usan `<section>`/`<h3>`). Acotar esas reglas a la página (`main > section`, `.site-header`).
 - **Fuentes decorativas en el PNG**: html-to-image no siempre incrusta Google Fonts y cae a una serif genérica; la firma usa la
   tipografía del sitio.
+- **El visor se sale del ancho de la página** dentro de un grid o flex: el contenedor crece al ancho del árbol (`min-width: auto`)
+  y el lienzo nunca hace scroll. El CSS del módulo lo evita con `container-type: inline-size` en `.orgv` (no en la copia exportada), que además
+  compacta la barra cuando el visor mide ≤ 560 px.
 - **Inputs del sitio** con borde propio dan doble borde al buscador: el CSS del módulo usa doble clase (`.orgv .orgv__buscar input`).
 - **`display` animado**: para animar al mostrar y ocultar con `hidden`, `transition: display … allow-discrete` + `@starting-style`.
 - **Estáticos con huella** (ASP.NET Core `MapStaticAssets`): los cambios de CSS/JS no se ven hasta recompilar y reiniciar.
@@ -112,6 +127,9 @@ Sin preguntar, se deduce del proyecto:
 |---|---|
 | `assets/organigrama.js` | Módulo ES: `organigramaPersonas`, `organigramaEquipos`, `arbolEquipos`, `visorOrganigrama`, `arbolOrg`, `iniciales`, `normalizar` |
 | `assets/organigrama.css` | Estilos con tokens `--org-*` (por defecto en `:where(:root)`, con modo oscuro), impresión y animaciones |
+| `assets/organigrama-tokens.css` | Alias `--org-*` → `--dt-*` para el estilo compartido |
+| `assets/default-theme/` | Estilo predeterminado compartido de claude-tools (copia de `shared/default-theme/`, no editar aquí) y opcionales `estilos/calido.css`, `estilos/pizarra.css` |
 | `assets/sql/equipos_jefaturas_cargos.sql` | Modelo opcional Postgres/Supabase: jefatura y cargo en la membresía, equipos anidados sin ciclos, vista de integrantes heredados |
 | `references/api.md` | Formas de datos, opciones de cada función y tokens |
-| `examples/demo/index.html` | Demo con 34 personas y 13 equipos: personas, equipos y el organigrama interno de un equipo |
+| `examples/demo/demo.html` | Demo en un solo archivo (abre con doble clic): 34 personas y 13 equipos, personas, equipos y el organigrama interno de un equipo |
+| `examples/demo/index.html`, `build.py` | Fuente del demo (carga el módulo; servir por HTTP) y el script que arma `demo.html` (`python build.py`) |
