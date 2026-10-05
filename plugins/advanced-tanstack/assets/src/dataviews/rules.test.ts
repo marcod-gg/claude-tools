@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { compareValues, fitColumns, matchFilters, matchRule, matchSearch, moveKey, moveTo, openColumn, openColumns, paginate, railGroups, toISODate, withGroupOrder } from './rules';
+import { compareValues, fitColumns, matchFilters, matchRule, matchSearch, moveKey, moveTo, openColumn, openColumns, openModesFor, paginate, railGroups, resolveOpenMode, toISODate, withGroupOrder } from './rules';
 import type { FieldDef, Fields, FilterRule } from './types';
 
 const text: FieldDef = { label: 'T', type: 'text' };
@@ -181,5 +181,24 @@ describe('moveTo', () => {
     expect(moveTo(['a', 'b', 'c', 'd'], 'd', 'b')).toEqual(['a', 'd', 'b', 'c']);
     expect(moveTo(['a', 'b', 'c', 'd'], 'a', 'c')).toEqual(['b', 'c', 'a', 'd']);
     expect(moveTo(['a', 'b'], 'a', 'x')).toEqual(['a', 'b']);
+  });
+});
+
+describe('openModesFor / resolveOpenMode', () => {
+  const all = ['page', 'tab', 'side', 'modal'] as const;
+  it('vista previa y modal siempre; pestañas solo con enlace', () => {
+    expect(openModesFor([...all], true)).toEqual(['page', 'tab', 'side', 'modal']);
+    expect(openModesFor([...all], false)).toEqual(['side', 'modal']);
+    expect(openModesFor(['tab', 'side'], false)).toEqual(['side']);
+  });
+  it('respeta lo elegido si se ofrece', () => {
+    expect(resolveOpenMode('side', [...all], false)).toBe('side');
+    expect(resolveOpenMode('tab', ['side', 'modal'], false)).toBe('modal');
+  });
+  it('sin elegir: modal con la ficha de la app; misma pestaña con enlace (como antes); si no, modal', () => {
+    expect(resolveOpenMode(undefined, [...all], true)).toBe('modal');
+    expect(resolveOpenMode(undefined, [...all], false)).toBe('page');
+    expect(resolveOpenMode(undefined, ['side', 'modal'], false)).toBe('modal');
+    expect(resolveOpenMode(undefined, ['side'], false)).toBe('side');
   });
 });

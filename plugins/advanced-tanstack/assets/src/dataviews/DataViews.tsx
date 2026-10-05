@@ -21,7 +21,8 @@ import { ViewTabs } from './ViewTabs';
 import { GroupRail } from './GroupRail';
 import { groupDragSource, groupDropTarget, mergeDrag, type Reorder } from './groupDrag';
 import { OpenRecord, SelectionContext, buildColumns, formatValue, type Selection } from './fields';
-import { PAGE_SIZES, compareValues, describeFilter, findOperator, isActive, isGroup, matchFilters, matchSearch, paginate, railGroups, railKey, ruleValueLabel, withGroupOrder } from './rules';
+import { PAGE_SIZES, compareValues, describeFilter, findOperator, isActive, isGroup, matchFilters, matchSearch, openModesFor, paginate, railGroups, railKey, resolveOpenMode, ruleValueLabel, withGroupOrder } from './rules';
+import { RecordPreview } from './RecordPreview';
 import { TYPE_ICON, TYPE_LABEL, useViews } from './useViews';
 import type { BulkAction, Fields, OpenMode, Row, ViewConfig, ViewType } from './types';
 import './dataviews.css';
@@ -73,9 +74,10 @@ export interface DataViewsProps {
   viewTypes?: ViewType[];
   /** Herramientas de la barra; todas encendidas salvo las que se pasen en false. */
   tools?: Partial<Record<ToolId, boolean>>;
-  /** Abre el registro en la página: panel lateral (vista previa) o modal, según la vista. Sin esto solo hay enlaces (rowHref). */
+  /** Abre el registro en la página con la ficha de la app: panel lateral o modal, según la vista. Sin esto, DataViews
+   *  muestra su propia vista previa (todos los campos, y "Abrir en una pestaña nueva" si hay rowHref). */
   onOpenRecord?: (row: Row, mode: 'side' | 'modal') => void;
-  /** Modos que cada vista puede elegir en Configuración (tope). Por defecto: misma pestaña y nueva con rowHref; panel y modal con onOpenRecord. */
+  /** Modos que cada vista puede elegir en Configuración (tope). Por defecto: misma pestaña y nueva con rowHref; panel y modal siempre. */
   openModes?: OpenMode[];
   /** Acciones masivas: casillas en Tabla y tarjetas, y una barra con estas acciones sobre lo elegido. */
   bulkActions?: BulkAction[];
@@ -84,7 +86,7 @@ export interface DataViewsProps {
 const OPEN_LABEL: Record<OpenMode, { label: string; icon: string }> = {
   page: { label: 'En la misma pestaña', icon: 'fa-arrow-right' },
   tab: { label: 'En una pestaña nueva', icon: 'fa-arrow-up-right-from-square' },
-  side: { label: 'Panel lateral (vista previa)', icon: 'fa-table-columns' },
+  side: { label: 'Vista previa a la derecha', icon: 'fa-table-columns' },
   modal: { label: 'Ventana sobre la vista (modal)', icon: 'fa-window-maximize' },
 };
 
@@ -194,6 +196,8 @@ export function DataViews(p: DataViewsProps) {
 
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [notice, setNotice] = useState<string | null>(null);
+  // Vista previa propia (sin onOpenRecord): registro abierto y cómo
+  const [preview, setPreview] = useState<{ row: Row; mode: 'side' | 'modal' } | null>(null);
   useEffect(() => {
     if (!notice) return;
     const t = setTimeout(() => setNotice(null), 6000);
@@ -352,10 +356,10 @@ export function DataViews(p: DataViewsProps) {
   };
 
   // Abrir registro desde su título: cada vista elige el modo en Configuración, dentro de los que permite el montaje.
-  const openOffered = (p.openModes ?? (['page', 'tab', 'side', 'modal'] as OpenMode[]))
-    .filter(m => (m === 'page' || m === 'tab' ? !!p.rowHref : !!p.onOpenRecord));
-  const openMode: OpenMode = view.open && openOffered.includes(view.open) ? view.open
-    : openOffered.includes('modal') ? 'modal' : openOffered[0] ?? 'page';
+  // Panel y modal: los de la app (onOpenRecord) o la vista previa propia (RecordPreview).
+  const openOffered = openModesFor(p.openModes ?? ['page', 'tab', 'side', 'modal'], !!p.rowHref);
+  const openMode = resolveOpenMode(view.open, openOffered, !!p.onOpenRecord);
+  const openRecord = p.onOpenRecord ?? ((row: Row, mode: 'side' | 'modal') => setPreview({ row, mode }));
   const selectFields = Object.keys(fields).filter(id => fields[id].type === 'select');
   // Reordenar arrastrando los grupos de un select (segmentos, secciones, columnas, subtítulos): guarda el orden personalizado.
   const reorderFor = (id: string): Reorder | undefined => (fields[id]?.type === 'select' ? {
@@ -674,9 +678,13 @@ export function DataViews(p: DataViewsProps) {
         </div>
       )}
 
-      <OpenRecord.Provider value={{ mode: openMode, open: p.onOpenRecord }}>
+      <OpenRecord.Provider value={{ mode: openMode, open: openRecord }}>
         <SelectionContext.Provider value={selection}>{body}</SelectionContext.Provider>
       </OpenRecord.Provider>
+      {preview && (
+        <RecordPreview key={preview.mode} row={preview.row} mode={preview.mode} fields={fields} titleField={titleField}
+          href={p.rowHref?.(preview.row)} onClose={() => setPreview(null)} />
+      )}
 
       {/* Pie: resumen de elementos (y en tabla, filas por página + paginación) bajo el contenido. */}
       {loaded && !loaded.loading && !loaded.error && (

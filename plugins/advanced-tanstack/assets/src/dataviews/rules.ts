@@ -1,4 +1,4 @@
-import type { FieldDef, FieldType, Fields, FilterGroup, FilterItem, FilterRule, Row } from './types';
+import type { FieldDef, FieldType, Fields, FilterGroup, FilterItem, FilterRule, OpenMode, Row } from './types';
 
 export interface Operator {
   id: string;
@@ -277,4 +277,22 @@ export function moveTo(keys: string[], from: string, to: string): string[] {
   const next = keys.filter(k => k !== from);
   next.splice(j, 0, from);
   return next;
+}
+
+/**
+ * Modos de abrir un registro desde su título que ofrece Configuración (dentro del tope `allowed`): misma pestaña y
+ * nueva solo con enlace (rowHref); panel lateral y modal siempre (los de la app con onOpenRecord, si no la vista previa propia).
+ */
+export const openModesFor = (allowed: OpenMode[], hasHref: boolean): OpenMode[] =>
+  allowed.filter(m => (m === 'page' || m === 'tab' ? hasHref : true));
+
+/**
+ * Modo efectivo: el elegido en la vista si se ofrece; si no, el de antes de la vista previa propia (modal con
+ * onOpenRecord, misma pestaña con enlace) y, sin ninguno de los dos, modal.
+ */
+export function resolveOpenMode(chosen: OpenMode | undefined, offered: OpenMode[], hasHost: boolean): OpenMode {
+  if (chosen && offered.includes(chosen)) return chosen;
+  if (hasHost && offered.includes('modal')) return 'modal';
+  if (offered.includes('page')) return 'page';
+  return offered.includes('modal') ? 'modal' : offered[0] ?? 'page';
 }

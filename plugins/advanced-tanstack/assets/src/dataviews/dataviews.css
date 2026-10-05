@@ -418,3 +418,27 @@ a.dv-title:hover { color: var(--c-brand); text-decoration: underline; }
 .dv .dv-bulk__btn:disabled { opacity: .5; cursor: not-allowed; }
 .dv .dv-bulk__btn.is-danger { color: var(--c-danger, var(--c-nuevo)); }
 .dv-bulk .dv-link { margin-left: auto; }
+
+/* Vista previa propia del registro (RecordPreview, sin onOpenRecord): modal centrado o panel a la derecha */
+.dv-preview { box-sizing: border-box; padding: 0; border: 1px solid var(--c-border); color: var(--c-text-b); background: var(--c-surface); font-size: .84rem;
+  box-shadow: 0 12px 32px rgba(16, 24, 40, .16), 0 4px 8px rgba(16, 24, 40, .06); }
+.dv-preview::backdrop { background: rgba(16, 24, 40, .35); }
+.dv-preview--modal { width: min(560px, calc(100vw - 32px)); max-height: min(80vh, 720px); border-radius: var(--dv-card-r, 18px); }
+.dv-preview--side { position: fixed; inset: 0 0 0 auto; z-index: 40; margin: 0; width: 420px; max-width: 100%; height: 100dvh; max-height: none;
+  border-width: 0 0 0 1px; border-radius: 0; }
+.dv-preview__box { display: flex; flex-direction: column; max-height: inherit; height: 100%; }
+.dv-preview--modal .dv-preview__box { max-height: min(80vh, 720px); }
+.dv-preview__head { display: flex; align-items: center; gap: 4px; padding: 14px 12px 12px 18px; border-bottom: 1px solid var(--c-border); }
+.dv-preview__head h2 { flex: 1; min-width: 0; margin: 0; font-size: 1.05rem; font-weight: 600; color: var(--c-text-h); overflow-wrap: anywhere; }
+.dv-preview__head .dv-icon { display: inline-grid; place-items: center; width: 32px; height: 32px; padding: 0; text-decoration: none; }
+.dv-preview__head .dv-icon:hover { background: var(--c-surface-2); color: var(--c-text-h); }
+.dv-preview__body { display: grid; gap: 12px; margin: 0; padding: 16px 18px 20px; overflow: auto; }
+.dv-preview__body > div { display: grid; gap: 2px; }
+.dv-preview__body dt { font-size: .72rem; color: var(--c-text-m); }
+.dv-preview__body dd { margin: 0; font-weight: 500; color: var(--c-text-h); overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: no-preference) {
+  .dv-preview--modal[open] { animation: dv-preview-in .18s cubic-bezier(.2, .8, .2, 1); }
+  .dv-preview--side[open] { animation: dv-preview-side .22s cubic-bezier(.2, .8, .2, 1); }
+}
+@keyframes dv-preview-in { from { opacity: 0; transform: translateY(8px) scale(.98); } }
+@keyframes dv-preview-side { from { transform: translateX(24px); opacity: 0; } }
