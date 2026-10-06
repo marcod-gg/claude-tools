@@ -1,0 +1,36 @@
+/* ============================================================================
+   default-theme · Estilo opcional "Pizarra": gris pizarra y verde azulado.
+   Cargar DESPUÉS de theme-tokens.css. Solo cambia neutros, marca y acentos (claro, oscuro y alto contraste);
+   semánticos, estados y daltonismo siguen los del estilo predeterminado.
+   ============================================================================ */
+
+:root, .dt-thp[data-theme="light"] {
+    --dt-brand: #0f766e; --dt-brand-emphasis: #115e59; --dt-brand-strong: #134e4a; --dt-brand-subtle: #d5f2ee; --dt-brand-ghost: rgba(15, 118, 110, .08);
+    --dt-accent: #b7791f; --dt-accent-2: #6366f1; --dt-logo-bg: #115e59;
+    --dt-bg: #f4f6f8; --dt-surface: #ffffff; --dt-surface-2: #eef1f4; --dt-border: #d3dae1; --dt-border-strong: #aeb8c2;
+    --dt-text: #172026; --dt-text-body: #2b363f; --dt-text-muted: #56646f; --dt-text-faint: #67747f;
+    --dt-focus-ring: 0 0 0 3px rgba(15, 118, 110, .3);
+    --dt-state-canceled: #56646f; --dt-state-canceled-bg: #eef1f4;
+}
+:root[data-theme="dark"], .dt-thp[data-theme="dark"] {
+    --dt-brand: #2dd4bf; --dt-brand-emphasis: #0f766e; --dt-brand-strong: #5eead4; --dt-brand-subtle: #12302d; --dt-brand-ghost: rgba(45, 212, 191, .14);
+    --dt-accent: #d69e2e; --dt-accent-2: #818cf8; --dt-logo-bg: #0f766e;
+    --dt-bg: #0f1417; --dt-surface: #161d21; --dt-surface-2: #0a0e10; --dt-border: #2c373d; --dt-border-strong: #4a5960;
+    --dt-text: #eef4f6; --dt-text-body: #ccd7dc; --dt-text-muted: #93a3ab; --dt-text-faint: #84949c;
+    --dt-focus-ring: 0 0 0 3px rgba(45, 212, 191, .4);
+    --dt-state-canceled: #93a3ab; --dt-state-canceled-bg: #1d262b;
+}
+:root[data-theme="light"][data-contrast="high"], .dt-thp[data-theme="light"][data-contrast="high"] {
+    --dt-bg: #ffffff; --dt-surface: #ffffff; --dt-surface-2: #e6ebef; --dt-border: #56646f; --dt-border-strong: #1c252b;
+    --dt-text: #0b1114; --dt-text-body: #0b1114; --dt-text-muted: #222c33; --dt-text-faint: #3f4b54;
+    --dt-brand: #0b5752; --dt-brand-emphasis: #0b4a46; --dt-brand-strong: #083b38; --dt-brand-subtle: #d5f2ee; --dt-logo-bg: #0b4a46;
+    --dt-focus-ring: 0 0 0 3px #0b5752;
+    --dt-state-canceled: #222c33;
+}
+:root[data-theme="dark"][data-contrast="high"], .dt-thp[data-theme="dark"][data-contrast="high"] {
+    --dt-bg: #05080a; --dt-surface: #0f1417; --dt-surface-2: #000000; --dt-border: #93a3ab; --dt-border-strong: #d6e0e4;
+    --dt-text: #ffffff; --dt-text-body: #f0f5f7; --dt-text-muted: #d6e0e4; --dt-text-faint: #b4c2c8;
+    --dt-brand: #7ff0dd; --dt-brand-emphasis: #0b5752; --dt-brand-strong: #b9f8ec; --dt-brand-subtle: #12302d; --dt-logo-bg: #0b5752;
+    --dt-focus-ring: 0 0 0 3px #7ff0dd;
+    --dt-state-canceled: #d6e0e4;
+}

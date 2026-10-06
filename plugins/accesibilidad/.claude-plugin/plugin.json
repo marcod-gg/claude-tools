@@ -1,0 +1,7 @@
+{
+  "name": "accesibilidad",
+  "description": "Accesibilidad de apps web: auditoría con Playwright + axe en 12 temas (daltonismo, alto contraste), skip link y foco en SPAs, contraste de Windows, reflow a 320 px y 150 %, página Accesibilidad estilo GitHub, CSS base y verificación.",
+  "version": "1.0.0",
+  "author": { "name": "marcod-gg" },
+  "keywords": ["accesibilidad", "a11y", "wcag", "axe", "playwright", "daltonismo", "alto-contraste"]
+}

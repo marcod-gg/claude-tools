@@ -1,0 +1,198 @@
+<!--
+  accesibilidad · Página de Accesibilidad (estilo GitHub → Settings → Appearance).
+  Bloque autocontenido (estilo + marcado + script) que depende de:
+    - default-theme/theme-tokens.css cargado en la página (usa --dt-* y .dt-thp para las vistas previas)
+    - default-theme/head.html en el <head> (window.dtTheme)
+    - a11y-base.css (foco con forced-colors y vistas previas con sus colores aun con el contraste de Windows)
+  Pegar dentro de la página/ruta "Accesibilidad" del proyecto (vista Razor, componente, plantilla…).
+  En Razor: pegar SIN este comentario (Razor lee los arroba aunque estén en un comentario HTML). Si agregas
+  reglas media dentro de <style>, escribe la arroba doble.
+  En React/JSX: montar el HTML en un contenedor o portar las secciones a componentes; la lógica es la del <script>.
+  Guardar el archivo en UTF-8 CON BOM si es .cshtml (sin BOM, IIS/ASP.NET muestra "dÃ­a" en vez de "día").
+-->
+<style>
+    .dt-a11y { max-width: 1040px; margin: 0 auto; padding: 28px 24px 48px; color: var(--dt-text-body); }
+    .dt-a11y h1 { font-size: 1.5rem; font-weight: 800; color: var(--dt-text); margin: 0 0 4px; }
+    .dt-a11y__lead { color: var(--dt-text-muted); margin: 0 0 24px; font-size: .9rem; }
+    .dt-a11y__box { background: var(--dt-surface); border: 1px solid var(--dt-border); border-radius: 12px; }
+    .dt-a11y__sec { padding: 20px; }
+    .dt-a11y__sec + .dt-a11y__sec { border-top: 1px solid var(--dt-border); }
+    .dt-a11y h2 { font-size: 1rem; font-weight: 700; color: var(--dt-text); margin: 0 0 4px; }
+    .dt-a11y__hint { font-size: .84rem; color: var(--dt-text-muted); margin: 0 0 14px; }
+    .dt-a11y__mode { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .dt-a11y__mode label { font-weight: 600; color: var(--dt-text); margin: 0; }
+    .dt-a11y select { max-width: 100%; border: 1px solid var(--dt-border); border-radius: 8px; background: var(--dt-surface-2); color: var(--dt-text); padding: 6px 10px; font: inherit; font-size: .88rem; }
+    .dt-a11y__group { margin-top: 18px; }
+    .dt-a11y__group h3 { font-size: .88rem; font-weight: 700; color: var(--dt-text); margin: 0 0 10px; }
+    .dt-a11y__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+    .dt-a11y label { margin-bottom: 0; } /* Bootstrap pone margin-bottom a todo <label> */
+
+    .dt-thcard { display: flex; flex-direction: column; border: 1px solid var(--dt-border); border-radius: 12px; overflow: hidden; cursor: pointer; background: var(--dt-surface); transition: border-color .15s; }
+    .dt-thcard:hover { border-color: var(--dt-border-strong); }
+    .dt-thcard:has(input:checked) { border-color: var(--dt-brand); box-shadow: 0 0 0 1px var(--dt-brand); }
+    .dt-thcard:has(input:focus-visible), .dt-a11y__opt:has(input:focus-visible) { outline: 2px solid var(--dt-brand); outline-offset: 2px; }
+    .dt-thcard__foot { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-top: 1px solid var(--dt-border); }
+    .dt-a11y input[type=radio] { margin-top: 3px; accent-color: var(--dt-brand); width: 16px; height: 16px; flex-shrink: 0; }
+    .dt-thcard__name { display: block; font-size: .86rem; font-weight: 700; color: var(--dt-text); }
+    .dt-thcard__desc { display: block; font-size: .76rem; color: var(--dt-text-muted); margin-top: 2px; }
+    .dt-thcard__now { display: none; margin-left: auto; flex-shrink: 0; font-size: .75rem; font-weight: 700; color: var(--dt-brand); border: 1px solid var(--dt-brand); border-radius: 999px; padding: 1px 8px; }
+    .dt-thcard.is-now .dt-thcard__now { display: inline-block; }
+
+    /* Vista previa: mini interfaz pintada con los tokens del tema de la tarjeta */
+    .dt-thp { background: var(--dt-bg); padding: 10px; display: grid; grid-template-columns: 34px 1fr; gap: 8px; height: 126px; }
+    .dt-thp__side { background: var(--dt-surface); border: 1px solid var(--dt-border); border-radius: 6px; padding: 6px 5px; display: flex; flex-direction: column; gap: 5px; }
+    .dt-thp__side span { height: 5px; border-radius: 3px; background: var(--dt-border-strong); }
+    .dt-thp__side span:first-child { background: var(--dt-brand-emphasis); }
+    .dt-thp__main { background: var(--dt-surface); border: 1px solid var(--dt-border); border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .dt-thp__title { height: 7px; width: 60%; border-radius: 3px; background: var(--dt-text); }
+    .dt-thp__line { height: 5px; width: 85%; border-radius: 3px; background: var(--dt-text-muted); opacity: .55; }
+    .dt-thp__btns { display: flex; gap: 6px; }
+    .dt-thp__btns span { height: 12px; width: 30px; border-radius: 4px; }
+    .dt-thp__dots { display: flex; gap: 5px; margin-top: auto; }
+    .dt-thp__dots i { width: 14px; height: 14px; border-radius: 4px; }
+
+    .dt-a11y__opts { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+    .dt-a11y__opt { display: flex; align-items: flex-start; gap: 10px; padding: 12px; border: 1px solid var(--dt-border); border-radius: 10px; background: var(--dt-surface); cursor: pointer; }
+    .dt-a11y__opt:hover { border-color: var(--dt-border-strong); }
+    .dt-a11y__opt:has(input:checked) { border-color: var(--dt-brand); box-shadow: 0 0 0 1px var(--dt-brand); }
+    .dt-a11y__opt b { display: block; font-size: .88rem; color: var(--dt-text); }
+    .dt-a11y__opt small { display: block; font-size: .76rem; color: var(--dt-text-muted); margin-top: 2px; }
+    .dt-a11y__sizes { display: flex; flex-wrap: wrap; gap: 8px; }
+    .dt-a11y__sizes .dt-a11y__opt { align-items: center; padding: 8px 12px; }
+    .dt-a11y__label { font-size: .8rem; font-weight: 700; color: var(--dt-text); margin: 16px 0 8px; }
+    .dt-a11y__sample { margin-top: 14px; padding: 14px 16px; border: 1px dashed var(--dt-border-strong); border-radius: 10px; background: var(--dt-surface-2); }
+    .dt-a11y__sample p { margin: 0 0 6px; }
+    .dt-a11y__sample p:last-child { margin: 0; font-size: .8rem; color: var(--dt-text-muted); }
+    .dt-font-sample--roboto { font-family: 'Roboto', sans-serif !important; }
+    .dt-font-sample--atkinson { font-family: 'Atkinson Hyperlegible', sans-serif !important; }
+    .dt-font-sample--lexend { font-family: 'Lexend', sans-serif !important; }
+    .dt-font-sample--system { font-family: system-ui, sans-serif !important; }
+    .dt-a11y__note { margin: 14px 0 0; }
+    .dt-a11y [hidden] { display: none !important; }
+    @media (max-width: 480px) { .dt-a11y { padding: 20px 16px 32px; } .dt-a11y__sec { padding: 16px; } }
+</style>
+
+<div class="dt-a11y">
+    <h1>Accesibilidad</h1>
+    <p class="dt-a11y__lead">Elige cómo se ve la aplicación: tema, contraste y texto. Los temas de daltonismo cambian los colores de estado y de éxito/peligro para que se distingan con protanopía, deuteranopía o tritanopía. La preferencia se guarda en este navegador.</p>
+
+    <div class="dt-a11y__box">
+        <section class="dt-a11y__sec" aria-labelledby="dtA11yThemeH">
+            <h2 id="dtA11yThemeH">Tema</h2>
+            <p class="dt-a11y__hint">Usa un tema fijo o sincronízalo con el modo claro/oscuro de tu sistema operativo.</p>
+            <div class="dt-a11y__mode">
+                <label for="dtA11yMode">Modo de tema</label>
+                <select id="dtA11yMode">
+                    <option value="single">Tema único</option>
+                    <option value="auto">Sincronizar con el sistema</option>
+                </select>
+            </div>
+            <div class="dt-a11y__group" data-mode="single"><h3>Tema</h3><div class="dt-a11y__grid" role="radiogroup" aria-label="Tema" data-cards="single"></div></div>
+            <div class="dt-a11y__group" data-mode="auto" hidden><h3>Tema de día (sistema en modo claro)</h3><div class="dt-a11y__grid" role="radiogroup" aria-label="Tema de día" data-cards="day"></div></div>
+            <div class="dt-a11y__group" data-mode="auto" hidden><h3>Tema de noche (sistema en modo oscuro)</h3><div class="dt-a11y__grid" role="radiogroup" aria-label="Tema de noche" data-cards="night"></div></div>
+            <p class="dt-a11y__hint dt-a11y__note">Los estados siempre se muestran también con su nombre o icono, nunca solo con color.</p>
+        </section>
+
+        <section class="dt-a11y__sec" aria-labelledby="dtA11yContrastH">
+            <h2 id="dtA11yContrastH">Contraste</h2>
+            <p class="dt-a11y__hint">El alto contraste lleva textos, bordes, enlaces y colores de estado a 7:1 (nivel AAA) y hace más visible el foco del teclado. Se combina con cualquier tema.</p>
+            <div class="dt-a11y__opts" role="radiogroup" aria-label="Contraste">
+                <label class="dt-a11y__opt"><input type="radio" name="dtA11yContrast" value="default" /><span><b>Estándar</b><small>Contraste AA (4.5:1)</small></span></label>
+                <label class="dt-a11y__opt"><input type="radio" name="dtA11yContrast" value="high" /><span><b>Alto contraste</b><small>Contraste AAA (7:1), bordes marcados</small></span></label>
+            </div>
+        </section>
+
+        <section class="dt-a11y__sec" aria-labelledby="dtA11yTextH">
+            <h2 id="dtA11yTextH">Texto</h2>
+            <p class="dt-a11y__hint">Tipo y tamaño de letra de toda la aplicación.</p>
+            <div class="dt-a11y__label" id="dtA11yFontL">Tipo de letra</div>
+            <div class="dt-a11y__opts" role="radiogroup" aria-labelledby="dtA11yFontL">
+                <label class="dt-a11y__opt"><input type="radio" name="dtA11yFont" value="roboto" /><span><b class="dt-font-sample--roboto">Roboto</b><small>Predeterminada</small></span></label>
+                <label class="dt-a11y__opt"><input type="radio" name="dtA11yFont" value="atkinson" /><span><b class="dt-font-sample--atkinson">Atkinson Hyperlegible</b><small>Letras muy distinguibles, pensada para baja visión</small></span></label>
+                <label class="dt-a11y__opt"><input type="radio" name="dtA11yFont" value="lexend" /><span><b class="dt-font-sample--lexend">Lexend</b><small>Lectura más fluida; útil con dislexia</small></span></label>
+                <label class="dt-a11y__opt"><input type="radio" name="dtA11yFont" value="system" /><span><b class="dt-font-sample--system">Del sistema</b><small>La fuente de tu equipo</small></span></label>
+            </div>
+            <div class="dt-a11y__label" id="dtA11ySizeL">Tamaño</div>
+            <div class="dt-a11y__sizes" role="radiogroup" aria-labelledby="dtA11ySizeL">
+                <label class="dt-a11y__opt"><input type="radio" name="dtA11ySize" value="87.5" /><span><b>Pequeño</b></span></label>
+                <label class="dt-a11y__opt"><input type="radio" name="dtA11ySize" value="100" /><span><b>Normal</b></span></label>
+                <label class="dt-a11y__opt"><input type="radio" name="dtA11ySize" value="112.5" /><span><b>Grande</b></span></label>
+                <label class="dt-a11y__opt"><input type="radio" name="dtA11ySize" value="125" /><span><b>Muy grande</b></span></label>
+                <label class="dt-a11y__opt"><input type="radio" name="dtA11ySize" value="150" /><span><b>Máximo</b></span></label>
+            </div>
+            <div class="dt-a11y__sample">
+                <p>Ejemplo #81712 · «Il1 O0 rn m» ¿se distinguen bien?</p>
+                <p>Vista previa del texto con la fuente y el tamaño elegidos.</p>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var a11y = window.dtTheme;
+        if (!a11y) return;
+        var THEMES = [
+            ['light', 'Claro', 'Tema claro predeterminado.'],
+            ['light_colorblind', 'Claro · protanopía y deuteranopía', 'Sin pares rojo/verde: éxito en azul y peligro en naranjo.'],
+            ['light_tritanopia', 'Claro · tritanopía', 'Sin pares azul/amarillo.'],
+            ['dark', 'Oscuro', 'Tema oscuro predeterminado.'],
+            ['dark_colorblind', 'Oscuro · protanopía y deuteranopía', 'Sin pares rojo/verde: éxito en azul y peligro en naranjo.'],
+            ['dark_tritanopia', 'Oscuro · tritanopía', 'Sin pares azul/amarillo.']
+        ];
+        var STATES = ['new', 'active', 'waiting', 'pending', 'done', 'canceled'];
+        var groups = { single: 'dtA11ySingle', day: 'dtA11yDay', night: 'dtA11yNight' };
+        var el = function (tag, cls, attrs) { var e = document.createElement(tag); if (cls) e.className = cls; for (var k in attrs || {}) e.setAttribute(k, attrs[k]); return e; };
+
+        // Tarjetas de tema con vista previa real (.dt-thp aplica los tokens de ese tema).
+        document.querySelectorAll('[data-cards]').forEach(function (grid) {
+            var key = grid.getAttribute('data-cards');
+            THEMES.filter(function (t) { return key === 'single' || (key === 'day' ? t[0].indexOf('light') === 0 : t[0].indexOf('dark') === 0); })
+                .forEach(function (t) {
+                    var parts = t[0].split('_');
+                    var card = el('label', 'dt-thcard', { 'data-theme-id': t[0] });
+                    var thp = el('span', 'dt-thp', { 'data-theme': parts[0], 'data-vision': parts[1] || 'default', 'aria-hidden': 'true' });
+                    thp.innerHTML = '<span class="dt-thp__side"><span></span><span></span><span></span></span>' +
+                        '<span class="dt-thp__main"><span class="dt-thp__title"></span><span class="dt-thp__line"></span>' +
+                        '<span class="dt-thp__btns"><span style="background:var(--dt-brand-emphasis)"></span><span style="background:var(--dt-success)"></span><span style="background:var(--dt-danger)"></span></span>' +
+                        '<span class="dt-thp__dots">' + STATES.map(function (s) { return '<i style="background:var(--dt-state-' + s + ')"></i>'; }).join('') + '</span></span>';
+                    var foot = el('span', 'dt-thcard__foot');
+                    var radio = el('input', null, { type: 'radio', name: groups[key], value: t[0] });
+                    var txt = el('span'); txt.innerHTML = '<span class="dt-thcard__name"></span><span class="dt-thcard__desc"></span>';
+                    txt.firstChild.textContent = t[1]; txt.lastChild.textContent = t[2];
+                    var now = el('span', 'dt-thcard__now'); now.textContent = 'Activo';
+                    foot.append(radio, txt, now); card.append(thp, foot); grid.append(card);
+                });
+        });
+
+        var modeSel = document.getElementById('dtA11yMode');
+        var extra = { dtA11yContrast: 'contrast', dtA11yFont: 'font', dtA11ySize: 'size' };
+        function render() {
+            var p = a11y.get(), now = a11y.current();
+            modeSel.value = p.mode;
+            document.querySelectorAll('.dt-a11y__group').forEach(function (g) { g.hidden = g.getAttribute('data-mode') !== p.mode; });
+            Object.keys(groups).forEach(function (k) { document.querySelectorAll('input[name="' + groups[k] + '"]').forEach(function (r) { r.checked = r.value === p[k]; }); });
+            Object.keys(extra).forEach(function (n) { document.querySelectorAll('input[name="' + n + '"]').forEach(function (r) { r.checked = String(p[extra[n]]) === r.value; }); });
+            // "Activo" = el tema que se ve ahora (en modo sincronizado depende del sistema).
+            document.querySelectorAll('.dt-thp').forEach(function (t) { t.setAttribute('data-contrast', p.contrast); });
+            document.querySelectorAll('.dt-thcard').forEach(function (c) {
+                var single = c.querySelector('input').name === groups.single;
+                c.classList.toggle('is-now', (p.mode === 'single') === single && c.getAttribute('data-theme-id') === now);
+            });
+        }
+        function bind(name, field, num) {
+            document.querySelectorAll('input[name="' + name + '"]').forEach(function (r) {
+                r.addEventListener('change', function () { if (!r.checked) return; var p = a11y.get(); p[field] = num ? +r.value : r.value; a11y.set(p); render(); });
+            });
+        }
+        Object.keys(groups).forEach(function (k) { bind(groups[k], k); });
+        bind('dtA11yContrast', 'contrast'); bind('dtA11yFont', 'font'); bind('dtA11ySize', 'size', true);
+        modeSel.addEventListener('change', function () { var p = a11y.get(); p.mode = modeSel.value; a11y.set(p); render(); });
+        if (window.matchMedia) { var mq = window.matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', function () { setTimeout(render); }); }
+        // Las muestras de fuente se ven con su tipografía: se descargan solo en esta página.
+        var l = document.createElement('link'); l.rel = 'stylesheet';
+        l.href = 'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@700&family=Lexend:wght@600&display=swap';
+        document.head.appendChild(l);
+        render();
+    })();
+</script>

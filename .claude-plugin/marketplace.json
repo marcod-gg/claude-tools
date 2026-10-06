@@ -19,6 +19,11 @@
       "name": "cloudflare-like-layout",
       "source": "./plugins/cloudflare-like-layout",
       "description": "Consola multicuenta tipo dashboard de Cloudflare: selector de cuentas, sidebar con riel y vista rápida, vistas por recurso y búsqueda Ctrl K."
+    },
+    {
+      "name": "accesibilidad",
+      "source": "./plugins/accesibilidad",
+      "description": "Accesibilidad de apps web: auditoría con Playwright + axe en 12 temas, foco y título en SPAs, contraste de Windows, reflow, página Accesibilidad y verificación."
     }
   ]
 }

@@ -1,0 +1,49 @@
+/* ============================================================================
+   accesibilidad · Reglas base que el tema no cubre. Cargar DESPUÉS de default-theme/theme-tokens.css.
+   Cada bloque nace de un fallo real encontrado auditando una app (ver references/patrones.md).
+   ============================================================================ */
+
+/* ── Saltar al contenido: primer elemento del <body>, visible solo con foco. Con rutas hash (#/…) el foco se mueve
+   por JS (references/patrones.md § Skip link): un href="#main" cambiaría la ruta. ── */
+.dt-skip {
+    position: absolute; left: 8px; top: -60px; z-index: 1000; padding: 8px 12px; border-radius: var(--dt-r-sm, 6px);
+    background: var(--dt-brand-emphasis); color: #fff; font-weight: 600; text-decoration: none;
+}
+.dt-skip:focus { top: 12px; }
+
+/* ── Solo para lector de pantalla. Es absoluto: si su ancestro con scroll (tablas) no es su bloque contenedor, se escapa
+   del scroll y crea scroll horizontal en toda la página. Por eso .dt-scroll-x lleva position: relative. ── */
+.dt-sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.dt-scroll-x { position: relative; overflow-x: auto; }
+
+/* ── Al cambiar de ruta el foco va al h1 (assets/route-focus.js): lo anuncia el lector, sin anillo visible. ── */
+h1[tabindex="-1"]:focus { outline: none; box-shadow: none; }
+
+/* ── Contraste de Windows (forced-colors): el sistema BORRA box-shadow y los fondos. Un foco hecho con
+   `outline: none; box-shadow: …` desaparece, y la opción elegida que solo se marca con fondo también. ── */
+@media (forced-colors: active) {
+    :focus-visible { outline: 2px solid CanvasText !important; outline-offset: 2px !important; }
+    label:has(> input:focus-visible) { outline: 2px solid CanvasText; outline-offset: 2px; }
+    [aria-pressed="true"], [aria-current="page"], [aria-selected="true"], .dt-seg label:has(:checked) { outline: 2px solid Highlight; outline-offset: -2px; }
+}
+/* Las vistas previas de tema (página Accesibilidad) muestran sus colores reales aun con el contraste de Windows. */
+.dt-thp { forced-color-adjust: none; }
+
+/* ── Control segmentado con radios nativos: un Tab entra al grupo, las flechas eligen, Espacio marca.
+   <span class="dt-seg" role="radiogroup" aria-label="…"><label><input type="radio" name="x" checked>Uno</label>…</span>
+   Nunca <button role="radio">: no trae flechas ni un solo punto de Tab, y obliga a reescribir lo que el radio ya hace. ── */
+.dt-seg { display: inline-flex; flex-wrap: wrap; padding: 2px; border: 1px solid var(--dt-border); border-radius: var(--dt-r-sm, 6px); }
+.dt-seg label { position: relative; display: inline-flex; align-items: center; min-height: 1.75rem; padding: 0 .625rem; border-radius: 4px; color: var(--dt-text-muted); cursor: pointer; }
+.dt-seg label:hover { color: var(--dt-text); }
+.dt-seg label:has(:checked) { background: var(--dt-surface-2); color: var(--dt-text); font-weight: 600; }
+.dt-seg label:has(:focus-visible) { box-shadow: var(--dt-focus-ring); }
+.dt-seg input { position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0; }
+
+/* ── Área táctil de 24 px (WCAG 2.5.8) para enlaces de 16 px en tablas y listas densas: el padding agranda lo que se
+   puede tocar y el margen negativo lo compensa, así el diseño no se mueve (también en inline-flex). ── */
+.dt-target, .dt-scroll-x td a { padding-block: .25rem; margin-block: -.25rem; }
+
+/* ── Movimiento reducido: theme-tokens.css ya anula transiciones; esto cubre animaciones propias y scroll suave. ── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}
