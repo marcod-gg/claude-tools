@@ -6,6 +6,7 @@ Skills propias para Claude Code, publicadas como marketplace de plugins.
 |---|---|
 | `advanced-tanstack` | Tablas de datos con TanStack Table (React + Vite): vistas guardadas tipo Notion, tabla, tablero kanban y tarjetas, filtros y/o con grupos, segmentos, orden personalizado arrastrando, descarga Excel/PDF y estilo por espacio de trabajo. Ejemplo en [`plugins/advanced-tanstack/examples/demo/`](plugins/advanced-tanstack/examples/demo/). |
 | `organigrama` | Organigramas interactivos sin dependencias: por jefatura directa, de equipos anidados (áreas y transversales) e interno por equipo. Marca de agua, zoom, buscador, arrastre, pantalla completa y descarga PNG/PDF de todo o de una parte (descendente, ascendente, con pares). Modelo opcional Postgres/Supabase. Ejemplo en [`plugins/organigrama/examples/demo/`](plugins/organigrama/examples/demo/). |
+| `cloudflare-like-layout` | Estructura de consola multicuenta al estilo del dashboard de Cloudflare, sin dependencias: página para elegir cuenta, selector de cuenta en el sidebar, grupos desplegables, riel de íconos con vista rápida al pasar el cursor, menú que se desliza al entrar a un recurso, recientes, búsqueda Ctrl K y menú de usuario. Ejemplo en [`plugins/cloudflare-like-layout/examples/demo/`](plugins/cloudflare-like-layout/examples/demo/). |
 
 ## Estilo compartido
 
@@ -26,6 +27,7 @@ python scripts/sync-default-theme.py    # copia shared/default-theme/ a cada plu
 claude plugin marketplace add marcod-gg/claude-tools
 claude plugin install advanced-tanstack@claude-tools
 claude plugin install organigrama@claude-tools
+claude plugin install cloudflare-like-layout@claude-tools
 ```
 
 Para un proyecto concreto, agregar `--scope project` (queda en su `.claude/settings.json`).

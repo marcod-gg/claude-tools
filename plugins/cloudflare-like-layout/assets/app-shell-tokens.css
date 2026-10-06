@@ -1,0 +1,10 @@
+/* Alias --as-* → --dt-* para usar el shell con el estilo compartido (default-theme, tokens --dt-*).
+   Cargar después de default-theme/theme-tokens.css (y del estilo opcional, si hay) y de app-shell.css. */
+:root, .dt-thp {
+  --as-bg: var(--dt-bg); --as-surface: var(--dt-surface); --as-hover: var(--dt-surface-2); --as-active: var(--dt-brand-ghost);
+  --as-line: var(--dt-border); --as-line-strong: var(--dt-border-strong);
+  --as-ink: var(--dt-text); --as-ink-2: var(--dt-text-body); --as-muted: var(--dt-text-muted);
+  --as-brand: var(--dt-brand); --as-brand-bg: var(--dt-brand-emphasis); --as-on-brand: #fff; --as-danger: var(--dt-danger);
+  --as-focus: var(--dt-focus-ring); --as-shadow: var(--dt-shadow-lg); --as-font: var(--dt-font);
+  --as-r: var(--dt-r-xs); --as-r-lg: var(--dt-r-md);
+}

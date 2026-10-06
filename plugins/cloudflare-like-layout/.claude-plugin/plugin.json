@@ -1,0 +1,7 @@
+{
+  "name": "cloudflare-like-layout",
+  "description": "Estructura de consola multicuenta al estilo del dashboard de Cloudflare: selector de cuentas, sidebar con grupos y riel con vista rápida, vistas deslizantes por recurso, recientes, búsqueda Ctrl K y menú de usuario. Sin dependencias.",
+  "version": "1.0.0",
+  "author": { "name": "marcod-gg" },
+  "keywords": ["layout", "sidebar", "multicuenta", "dashboard", "command-palette"]
+}

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>App shell · demo</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1"></script>
+    <link rel="stylesheet" href="../../assets/app-shell.css">
+    <style>
+        .demo-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+        .demo-card { padding: 16px; border: 1px solid var(--as-line); border-radius: var(--as-r-lg); background: var(--as-surface); }
+        .demo-card h3 { margin: 0 0 6px; font-size: .875rem; color: var(--as-ink); }
+        .demo-card p { margin: 0; color: var(--as-muted); }
+        .demo-crumb { margin: 0 0 4px; color: var(--as-muted); font-size: .75rem; }
+    </style>
+</head>
+<body style="margin:0">
+<div id="app"></div>
+<script src="../../assets/app-shell.js"></script>
+<script>
+    // Datos de ejemplo: dos cuentas, cada una con sus dominios (recursos con menú propio).
+    const accounts = [
+        { id: 'a1b2c3', name: 'Equipo Plataforma', org: 'Empresa Demo', domains: ['ejemplo.cl', 'tienda-demo.com'] },
+        { id: 'd4e5f6', name: 'Cuenta personal', org: null, domains: [] },
+        { id: 'g7h8i9', name: 'Laboratorio', org: 'Empresa Demo', domains: ['lab.ejemplo.cl'] },
+    ];
+    const nav = [
+        { label: 'Inicio de la cuenta', icon: 'ph ph-house', href: '#/:account/home' },
+        { recents: true, label: 'Recientes', icon: 'ph ph-clock-counter-clockwise' },
+        { label: 'Dominios', icon: 'ph ph-globe', children: [
+            { label: 'Vista general', href: '#/:account/domains' },
+            { label: 'Registros', href: '#/:account/domains/registrations' },
+            { label: 'Transferencias', href: '#/:account/domains/transfers' }] },
+        { label: 'Observabilidad', icon: 'ph ph-pulse', badge: 'Nuevo', children: [
+            { label: 'Logs', href: '#/:account/observability/logs' },
+            { label: 'Trazas', href: '#/:account/observability/traces' },
+            { label: 'Analytics', children: [
+                { label: 'Análisis de la cuenta', href: '#/:account/analytics/account' },
+                { label: 'Análisis web', href: '#/:account/analytics/web' }] },
+            { label: 'Alertas', children: [
+                { label: 'Vista general', href: '#/:account/alerts' },
+                { label: 'Destinos', href: '#/:account/alerts/destinations' }] }] },
+        { section: 'Desarrollo' },
+        { label: 'Cómputo', icon: 'ph ph-cpu', children: [
+            { label: 'Funciones', href: '#/:account/compute/functions' },
+            { label: 'Contenedores', href: '#/:account/compute/containers' },
+            { label: 'Colas', href: '#/:account/compute/queues' }] },
+        { label: 'Almacenamiento y bases de datos', icon: 'ph ph-database', children: [
+            { label: 'Objetos', href: '#/:account/storage/objects' },
+            { label: 'Clave-valor', href: '#/:account/storage/kv' },
+            { label: 'Base de datos SQL', href: '#/:account/storage/sql', badge: 'Beta' }] },
+        { section: 'Proteger y conectar' },
+        { label: 'Seguridad', icon: 'ph ph-shield-check', children: [
+            { label: 'Información general', href: '#/:account/security' },
+            { label: 'Reglas', href: '#/:account/security/rules' }] },
+        { label: 'Acceso', icon: 'ph ph-lock-key', href: '#/:account/access' },
+        { separator: true },
+        { label: 'Administrar cuenta', icon: 'ph ph-gear', children: [
+            { label: 'Miembros', href: '#/:account/members' },
+            { label: 'Facturación', href: '#/:account/billing' },
+            { label: 'Tokens de API', href: '#/:account/api-tokens' },
+            { label: 'Registros de auditoría', href: '#/:account/audit-log' }] },
+    ];
+    const domainNav = [
+        { label: 'Información general', icon: 'ph ph-house', href: '#/:account/:scope' },
+        { recents: true, label: 'Recientes', icon: 'ph ph-clock-counter-clockwise' },
+        { label: 'DNS', icon: 'ph ph-list-bullets', children: [
+            { label: 'Registros', href: '#/:account/:scope/dns/records' },
+            { label: 'Configuración', href: '#/:account/:scope/dns/settings' }] },
+        { label: 'SSL/TLS', icon: 'ph ph-lock', children: [
+            { label: 'Información general', href: '#/:account/:scope/ssl' },
+            { label: 'Certificados', href: '#/:account/:scope/ssl/certificates' }] },
+        { label: 'Seguridad', icon: 'ph ph-shield', children: [
+            { label: 'Información general', href: '#/:account/:scope/security' },
+            { label: 'Reglas de seguridad', href: '#/:account/:scope/security/rules' }] },
+        { label: 'Caché', icon: 'ph ph-lightning', href: '#/:account/:scope/cache' },
+        { label: 'Reglas', icon: 'ph ph-flow-arrow', href: '#/:account/:scope/rules' },
+    ];
+
+    // Ruta por hash: #/ → selector; #/<cuenta>/<resto>; si el primer tramo tiene un punto, es un dominio (recurso).
+    function route() {
+        const parts = (location.hash.slice(1) || '/').split('/').filter(Boolean);
+        const account = accounts.some(a => a.id === parts[0]) ? parts[0] : null;
+        const scope = account && parts[1] && parts[1].includes('.') ? { type: 'domain', id: parts[1] } : null;
+        return { account, scope, path: '#/' + parts.join('/') };
+    }
+
+    const r0 = route();
+    const shell = AppShell.mount(document.getElementById('app'), {
+        storageKey: 'as-demo',
+        brand: { name: 'Demo', href: '#/' },
+        user: { email: 'persona@ejemplo.cl' },
+        accounts, account: r0.account, scope: r0.scope, path: r0.path,
+        accountHome: '#/:account/home',
+        nav, scopes: { domain: { nav: domainNav, back: { label: 'Volver a Dominios', href: '#/:account/domains' } } },
+        actions: [{ label: 'Preguntar a la IA', icon: 'ph ph-sparkle', onClick: () => shell.openSearch() },
+                  { label: 'Ayuda', icon: 'ph ph-question', href: '#/help' }],
+        userMenu: [{ label: 'Perfil', icon: 'ph ph-user', href: '#/profile' },
+                   { label: 'Idioma', icon: 'ph ph-translate', onClick: () => alert('Idioma') },
+                   { separator: true },
+                   { label: 'Cerrar sesión', icon: 'ph ph-sign-out', danger: true, onClick: () => { location.hash = '#/'; } }],
+        searchTips: [{ prefix: 'ask:', label: 'Preguntar a la IA', icon: 'ph ph-sparkle' },
+                     { prefix: 'dom:', label: 'Buscar dominios', icon: 'ph ph-globe' }],
+        search: (q, prefix) => {   // resultados del servidor; aquí, dominios de la cuenta actual
+            const a = accounts.find(x => x.id === shell.state.account);
+            if (prefix === 'ask:') return [{ label: 'Preguntar: «' + q + '»', icon: 'ph ph-sparkle', onSelect: () => alert(q) }];
+            return (a ? a.domains : []).filter(d => d.includes(q.toLowerCase()))
+                .map(d => ({ label: d, hint: 'Dominio', href: '#/' + a.id + '/' + d, icon: 'ph ph-globe' }));
+        },
+        searchLabel: 'Dominios',
+        onCreateAccount: () => alert('Crear cuenta'),
+        footer: [{ label: 'Ayuda', href: '#/help' }, { label: 'Estado del sistema', href: '#/status' }, { label: 'Privacidad', href: '#/privacy' }],
+        copyright: '© 2026 Demo',
+    });
+
+    function renderPage() {
+        const r = route();
+        shell.update(r);
+        if (!r.account) return;
+        const a = accounts.find(x => x.id === r.account);
+        const main = shell.main;
+        const title = decodeURIComponent(r.path.split('/').slice(r.scope ? 3 : 2).join(' / ') || (r.scope ? 'Información general' : 'Inicio'));
+        if (r.path.endsWith('/domains')) {
+            main.innerHTML = `<div class="as-page"><div class="as-page-head"><div><h1 class="as-h1">Dominios</h1><p>Acelera y protege tus sitios.</p></div>
+                <button class="as-btn as-btn--primary" type="button">Añadir dominio</button></div>
+                <table class="as-table"><thead><tr><th>Dominio</th><th>Estado</th></tr></thead><tbody>${a.domains.map(d =>
+                `<tr><td><a href="#/${a.id}/${d}">${d}</a></td><td>Activo</td></tr>`).join('') || '<tr><td colspan="2">No hay dominios en esta cuenta.</td></tr>'}</tbody></table></div>`;
+            return;
+        }
+        main.innerHTML = `<div class="as-page"><p class="demo-crumb">${a.name}${r.scope ? ' / ' + r.scope.id : ''}</p>
+            <div class="as-page-head"><div><h1 class="as-h1">${title[0].toUpperCase() + title.slice(1)}</h1><p>Contenido de ejemplo de la página.</p></div></div>
+            <div class="demo-cards">${['Ctrl/⌘ K abre la búsqueda', 'Contrae el sidebar (abajo a la izquierda) y pasa el cursor por el riel',
+                'Entra a un dominio: el sidebar se desliza a su menú', 'Cambia de cuenta desde el nombre arriba a la izquierda']
+                .map(x => `<div class="demo-card"><h3>Prueba</h3><p>${x}</p></div>`).join('')}</div></div>`;
+    }
+    addEventListener('hashchange', renderPage);
+    renderPage();
+</script>
+</body>
+</html>

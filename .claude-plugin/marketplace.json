@@ -14,6 +14,11 @@
       "name": "organigrama",
       "source": "./plugins/organigrama",
       "description": "Organigramas interactivos: por jefatura, equipos anidados e interno por equipo, con zoom, buscador y descarga PNG/PDF."
+    },
+    {
+      "name": "cloudflare-like-layout",
+      "source": "./plugins/cloudflare-like-layout",
+      "description": "Consola multicuenta tipo dashboard de Cloudflare: selector de cuentas, sidebar con riel y vista rápida, vistas por recurso y búsqueda Ctrl K."
     }
   ]
 }
