@@ -42,6 +42,23 @@ claude plugin marketplace update claude-tools
 
 Para que se actualice solo: `claude plugin marketplace enable-auto-update claude-tools`.
 
+### Nombres anteriores
+
+Dos plugins cambiaron de nombre. Si los tienes instalados con el nombre viejo, desinstálalos e instala el nuevo:
+
+| Antes | Ahora |
+|---|---|
+| `advanced-tanstack` | `vistas-de-datos` |
+| `cloudflare-like-layout` | `consola-multicuenta` |
+
+```bash
+claude plugin marketplace update claude-tools
+claude plugin uninstall advanced-tanstack@claude-tools
+claude plugin uninstall cloudflare-like-layout@claude-tools
+claude plugin install vistas-de-datos@claude-tools
+claude plugin install consola-multicuenta@claude-tools
+```
+
 ## Agregar una skill nueva
 
 1. Crear `plugins/<nombre>/.claude-plugin/plugin.json` (nombre, descripción, versión) y su `SKILL.md`.
@@ -50,5 +67,13 @@ Para que se actualice solo: `claude plugin marketplace enable-auto-update claude
    sus tokens a `--dt-*` en un archivo de alias y agregar a su `SKILL.md` las preguntas de estilo y de marca/logo
    (ver `shared/default-theme/README.md`). Sin marca propia: nada de nombres, colores ni logos de una empresa.
 4. Validar: `claude plugin validate plugins/<nombre>` y `claude plugin validate .`
+
+**Nombre:** en kebab-case y en español, de 1 a 3 palabras, y que diga lo que entrega, no la librería que usa ni la marca
+que imita (`vistas-de-datos`, no `advanced-tanstack`). Es el mismo en la carpeta, en `plugin.json`, en el `name` del
+`SKILL.md` y en `marketplace.json`.
+
+**Descripción del `SKILL.md`:** como máximo 1024 caracteres, en este orden: qué entrega (una frase), las piezas clave,
+"Antes de implementar pregunta…" (solo los temas; el detalle va en el cuerpo) y "Úsala cuando el usuario pida…, aunque
+no nombre esta skill".
 
 Al cambiar una skill, subir su `version` en `plugin.json`: quien la tiene instalada sigue en su versión hasta que cambia.
