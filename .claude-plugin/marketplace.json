@@ -6,8 +6,8 @@
   },
   "plugins": [
     {
-      "name": "advanced-tanstack",
-      "source": "./plugins/advanced-tanstack",
+      "name": "vistas-de-datos",
+      "source": "./plugins/vistas-de-datos",
       "description": "Tablas de datos con TanStack Table: vistas tipo Notion, tabla, tablero y tarjetas."
     },
     {
@@ -16,8 +16,8 @@
       "description": "Organigramas interactivos: por jefatura, equipos anidados e interno por equipo, con zoom, buscador y descarga PNG/PDF."
     },
     {
-      "name": "cloudflare-like-layout",
-      "source": "./plugins/cloudflare-like-layout",
+      "name": "consola-multicuenta",
+      "source": "./plugins/consola-multicuenta",
       "description": "Consola multicuenta tipo dashboard de Cloudflare: selector de cuentas, sidebar con riel y vista rápida, vistas por recurso y búsqueda Ctrl K."
     },
     {

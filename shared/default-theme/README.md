@@ -1,6 +1,6 @@
 # Estilo compartido (default-theme)
 
-Estilo predeterminado de todas las skills de este repo (`advanced-tanstack`, `organigrama` y las que vengan), sin marca:
+Estilo predeterminado de todas las skills de este repo (`vistas-de-datos`, `organigrama` y las que vengan), sin marca:
 neutros grises y azul genérico, con claro, oscuro, daltonismo (protanopía/deuteranopía y tritanopía), alto contraste AAA y
 fuente/tamaño elegibles. Además hay dos estilos opcionales, que solo cambian neutros, marca y acentos:
 

@@ -1,4 +1,4 @@
-// Demo de DataViews (skill advanced-tanstack): mantenciones de flota, solo lectura, tabla + tablero + tarjetas.
+// Demo de DataViews (skill vistas-de-datos): mantenciones de flota, solo lectura, tabla + tablero + tarjetas.
 // Respuestas usadas: no se mueven registros; tema por defecto (default-theme). El resto, deducido por la skill.
 import { StrictMode, useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';

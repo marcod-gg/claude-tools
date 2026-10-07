@@ -1,9 +1,9 @@
 ---
-name: cloudflare-like-layout
-description: Estructura de panel de administración multicuenta al estilo del dashboard de Cloudflare, sin dependencias — página "Cuentas" para elegir cuenta (buscador, orden, crear), selector de cuenta en el encabezado del sidebar (popover con búsqueda y check), sidebar con secciones, grupos desplegables de hasta tres niveles, insignias Nuevo/Beta, "Recientes" por cuenta, contraer a riel de íconos con vista rápida al pasar el cursor, vistas deslizantes por recurso (entrar a un dominio cambia el menú con "← Volver a Dominios"), búsqueda Ctrl/⌘ K con recientes y prefijos ("ask:", "dom:"), barra superior con acciones y menú de usuario (Apariencia claro/oscuro/sistema), pie con enlaces y cajón en el celular. Antes de implementar pregunta qué estilo toma (colores de la página, el neutro casi negro del shell, el predeterminado de claude-tools u otro opcional), la marca y el logo, y qué es un "recurso" con menú propio. Úsala siempre que el usuario pida un layout tipo Cloudflare, "como dash.cloudflare.com", un panel de administración o consola con sidebar, multicuenta o multi-tenant con cambio de cuenta, sidebar colapsable con riel de íconos, menú que se desliza al entrar a un recurso, o una paleta de comandos Ctrl K, aunque no nombre esta skill.
+name: consola-multicuenta
+description: Cascarón de consola de administración multicuenta, sin dependencias, con la estructura del dashboard de Cloudflare (sin su marca): página para elegir cuenta, selector de cuenta en el sidebar, grupos desplegables, riel de íconos con vista rápida, menú que se desliza al entrar a un recurso, recientes, búsqueda Ctrl K, barra superior con menú de usuario y cajón en el celular. Antes de implementar pregunta estilo, marca y logo, y qué recurso tiene menú propio. Úsala cuando el usuario pida un panel de administración o consola con sidebar, una app multicuenta o multi-tenant con cambio de cuenta, un sidebar colapsable a íconos, una paleta de comandos Ctrl K o algo "como dash.cloudflare.com", aunque no nombre esta skill.
 ---
 
-# Cloudflare-like layout
+# Consola multicuenta
 
 Un script sin dependencias (`assets/app-shell.js`, expone `window.AppShell`) y su CSS con tokens (`assets/app-shell.css`)
 que arman el "cascarón" de una consola: sidebar, barra superior, contenido y pie. La app solo pinta sus páginas dentro de

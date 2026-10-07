@@ -4,9 +4,9 @@ Skills propias para Claude Code, publicadas como marketplace de plugins.
 
 | Plugin | Qué hace |
 |---|---|
-| `advanced-tanstack` | Tablas de datos con TanStack Table (React + Vite): vistas guardadas tipo Notion, tabla, tablero kanban y tarjetas, filtros y/o con grupos, segmentos, orden personalizado arrastrando, descarga Excel/PDF y estilo por espacio de trabajo. Ejemplo en [`plugins/advanced-tanstack/examples/demo/`](plugins/advanced-tanstack/examples/demo/). |
+| `vistas-de-datos` | Tablas de datos con TanStack Table (React + Vite): vistas guardadas tipo Notion, tabla, tablero kanban y tarjetas, filtros y/o con grupos, segmentos, orden personalizado arrastrando, descarga Excel/PDF y estilo por espacio de trabajo. Ejemplo en [`plugins/vistas-de-datos/examples/demo/`](plugins/vistas-de-datos/examples/demo/). |
 | `organigrama` | Organigramas interactivos sin dependencias: por jefatura directa, de equipos anidados (áreas y transversales) e interno por equipo. Marca de agua, zoom, buscador, arrastre, pantalla completa y descarga PNG/PDF de todo o de una parte (descendente, ascendente, con pares). Modelo opcional Postgres/Supabase. Ejemplo en [`plugins/organigrama/examples/demo/`](plugins/organigrama/examples/demo/). |
-| `cloudflare-like-layout` | Estructura de consola multicuenta al estilo del dashboard de Cloudflare, sin dependencias: página para elegir cuenta, selector de cuenta en el sidebar, grupos desplegables, riel de íconos con vista rápida al pasar el cursor, menú que se desliza al entrar a un recurso, recientes, búsqueda Ctrl K y menú de usuario. Ejemplo en [`plugins/cloudflare-like-layout/examples/demo/`](plugins/cloudflare-like-layout/examples/demo/). |
+| `consola-multicuenta` | Estructura de consola multicuenta al estilo del dashboard de Cloudflare, sin dependencias: página para elegir cuenta, selector de cuenta en el sidebar, grupos desplegables, riel de íconos con vista rápida al pasar el cursor, menú que se desliza al entrar a un recurso, recientes, búsqueda Ctrl K y menú de usuario. Ejemplo en [`plugins/consola-multicuenta/examples/demo/`](plugins/consola-multicuenta/examples/demo/). |
 | `accesibilidad` | Accesibilidad de apps web de la auditoría a la verificación: Playwright + axe en las 12 combinaciones de tema (daltonismo, alto contraste), skip link, título y foco al cambiar de ruta en SPAs, foco con el contraste de Windows, reflow a 320 px con letra al 150 %, página Accesibilidad estilo GitHub, CSS base y conversión de px a rem. Fallos reales y su arreglo en [`plugins/accesibilidad/references/patrones.md`](plugins/accesibilidad/references/patrones.md). |
 
 ## Estilo compartido
@@ -26,9 +26,9 @@ python scripts/sync-default-theme.py    # copia shared/default-theme/ a cada plu
 
 ```bash
 claude plugin marketplace add marcod-gg/claude-tools
-claude plugin install advanced-tanstack@claude-tools
+claude plugin install vistas-de-datos@claude-tools
 claude plugin install organigrama@claude-tools
-claude plugin install cloudflare-like-layout@claude-tools
+claude plugin install consola-multicuenta@claude-tools
 claude plugin install accesibilidad@claude-tools
 ```
 

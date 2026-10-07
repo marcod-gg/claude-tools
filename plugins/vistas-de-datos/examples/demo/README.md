@@ -12,7 +12,7 @@ los tres diseños, todas las herramientas, Estilo por vista (menú «…»), pan
 
 ## Regenerar `demo.html`
 
-Desde `plugins/advanced-tanstack/`:
+Desde `plugins/vistas-de-datos/`:
 
 ```bash
 mkdir -p /tmp/dv && cp -r assets/package.json assets/vite.config.ts assets/tsconfig.json assets/src /tmp/dv/
