@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Parrilla de widgets</title>
+<!-- Abre con doble clic: parrilla.js es un script clásico, no necesita servidor -->
+<link rel="stylesheet" href="../../assets/parrilla.css">
+<style>
+  body{margin:0;background:var(--pz-bg);color:var(--pz-fg);font:14px/1.5 system-ui,sans-serif}
+  main{max-width:1200px;margin:0 auto;padding:24px 16px 80px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  h1{margin:0;font-size:26px} h2{margin:0;font-size:17px}
+  .btn{font:700 13.5px system-ui;border-radius:999px;padding:8px 18px;border:1px solid var(--pz-accent);background:var(--pz-accent);color:var(--pz-surface);cursor:pointer;transition:transform .1s,filter .15s}
+  .btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+  .btn.ghost{background:none;color:var(--pz-accent)}
+  .bar{display:flex;align-items:end;gap:6px;height:120px}.bar i{flex:1;background:var(--pz-accent);border-radius:4px 4px 0 0;opacity:.8}
+  .big{font-size:40px;font-weight:900;font-variant-numeric:tabular-nums}
+  ul{margin:0;padding-left:18px}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><h1>Resumen</h1><div><button class="btn ghost" id="reset">Restablecer</button> <button class="btn" id="edit">Personalizar</button></div></div>
+
+  <div class="pz" id="grid">
+    <section class="pz-item" data-id="kpi"><h2>Tareas abiertas</h2><div class="pz-sub">Hoy</div><div class="pz-body"><div class="big">128</div></div></section>
+    <section class="pz-item" data-id="hechas"><h2>Listas esta semana</h2><div class="pz-sub">Lunes a hoy</div><div class="pz-body"><div class="big">34</div></div></section>
+    <section class="pz-item" data-id="carga"><h2>Carga por semana</h2><div class="pz-sub">Horas planificadas</div><div class="pz-body"><div class="bar"><i style="height:40%"></i><i style="height:70%"></i><i style="height:55%"></i><i style="height:90%"></i><i style="height:65%"></i><i style="height:30%"></i></div></div></section>
+    <section class="pz-item" data-id="bloq"><h2>Bloqueadas</h2><div class="pz-sub">Esperan a otra tarea</div><div class="pz-body"><ul><li>Migrar el checkout</li><li>Alerta de stock bajo</li><li>Consultas del catálogo</li></ul></div></section>
+    <section class="pz-item" data-id="notas"><h2>Notas</h2><div class="pz-sub">Texto libre del equipo</div><div class="pz-body"><p>Retro el viernes a las 16:00.</p></div></section>
+  </div>
+
+  <aside class="pz-tray" id="tray" hidden aria-labelledby="trayT">
+    <button type="button" class="pz-tab" data-pzmin aria-label="Abrir el panel de widgets"><span>Widgets</span></button>
+    <div class="pz-tray-head"><div><b id="trayT">Widgets</b><p>Haz clic en uno para agregarlo o arrástralo a la parrilla. Mueve los widgets arrastrándolos, estíralos desde la esquina (doble clic: alto automático) y quítalos con × o soltándolos en la zona de abajo.</p></div>
+      <span><button type="button" class="pz-x" data-pzmin aria-label="Contraer el panel">»</button><button type="button" class="pz-x" id="done" aria-label="Cerrar">×</button></span></div>
+    <div class="pz-list" id="avail"></div>
+    <div class="pz-tray-foot"><span></span><button type="button" class="btn" id="done2">Listo</button></div>
+  </aside>
+</main>
+<script src="../../assets/parrilla.js"></script>
+<script>
+  const KEY = "demo-parrilla", DEF = [{ id: "kpi", w: 4 }, { id: "hechas", w: 4 }, { id: "bloq", w: 4 }, { id: "carga", w: 8 }];
+  let saved = null; try { saved = JSON.parse(localStorage.getItem(KEY)) } catch (_) {}
+  const $ = id => document.getElementById(id);
+  const g = crearParrilla({
+    el: $("grid"), tray: $("tray"), list: $("avail"),
+    layout: Array.isArray(saved) ? saved : DEF,
+    onSave: l => { try { localStorage.setItem(KEY, JSON.stringify(l)) } catch (_) {} }
+  });
+  const edit = on => { g.editar(on); $("edit").hidden = on; (on ? $("done") : $("edit")).focus() };
+  $("edit").onclick = () => edit(true);
+  $("done").onclick = $("done2").onclick = () => edit(false);
+  $("reset").onclick = () => { g.setLayout(DEF); try { localStorage.removeItem(KEY) } catch (_) {} };
+  addEventListener("keydown", e => { if (e.key === "Escape" && $("grid").classList.contains("editing")) edit(false) });
+</script>
+</body>
+</html>

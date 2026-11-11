@@ -1,0 +1,7 @@
+{
+  "name": "ancho-ajustable",
+  "description": "Columnas de tabla con ancho ajustable: arrastrar el borde del encabezado, doble clic para ajustar al contenido y anchos guardados. Script sin dependencias para cualquier <table> y receta para TanStack Table.",
+  "version": "1.0.0",
+  "author": { "name": "marcod-gg" },
+  "keywords": ["tabla", "columnas", "ancho", "resize", "tanstack"]
+}

@@ -1,0 +1,8 @@
+/* Alias --pz-* → --dt-* para usar la parrilla con el estilo compartido (default-theme, tokens --dt-*).
+   Cargar después de default-theme/theme-tokens.css (y del estilo opcional, si hay) y de parrilla.css. */
+:root, .dt-thp {
+  --pz-bg: var(--dt-bg); --pz-surface: var(--dt-surface); --pz-sunken: var(--dt-surface-2); --pz-line: var(--dt-border);
+  --pz-fg: var(--dt-text); --pz-muted: var(--dt-text-muted); --pz-accent: var(--dt-brand);
+  --pz-bad: var(--dt-danger); --pz-on-bad: var(--dt-surface);
+  --pz-radius: var(--dt-r-lg); --pz-shadow: var(--dt-shadow-md);
+}

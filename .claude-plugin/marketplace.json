@@ -24,6 +24,16 @@
       "name": "accesibilidad",
       "source": "./plugins/accesibilidad",
       "description": "Accesibilidad de apps web: auditoría con Playwright + axe en 12 temas, foco y título en SPAs, contraste de Windows, reflow, página Accesibilidad y verificación."
+    },
+    {
+      "name": "parrilla-widgets",
+      "source": "./plugins/parrilla-widgets",
+      "description": "Parrilla de widgets personalizable: 12 columnas, mover y estirar con animación, bandeja de widgets y zona para quitar."
+    },
+    {
+      "name": "ancho-ajustable",
+      "source": "./plugins/ancho-ajustable",
+      "description": "Columnas de tabla con ancho ajustable: arrastrar el borde, doble clic para ajustar al contenido y anchos guardados."
     }
   ]
 }

@@ -1,0 +1,7 @@
+{
+  "name": "parrilla-widgets",
+  "description": "Parrilla de widgets personalizable sin dependencias: 12 columnas, mover y estirar con animación FLIP, alto automático, teclado, bandeja de widgets, zona para quitar y una columna en el celular.",
+  "version": "1.0.0",
+  "author": { "name": "marcod-gg" },
+  "keywords": ["dashboard", "widgets", "grid", "parrilla", "personalizar"]
+}

@@ -1,0 +1,84 @@
+/* Parrilla de widgets (skill parrilla-widgets de claude-tools). Solo tokens --pz-*: el sitio los apunta a su marca en su :root.
+   Los valores por defecto (neutros: grises y azul genérico) van en :where(:root) (especificidad cero), así cualquier
+   :root del sitio los reemplaza. */
+:where(:root){
+  --pz-bg:#f6f8fa; --pz-surface:#ffffff; --pz-sunken:#eff2f5; --pz-line:#d1d9e0;
+  --pz-fg:#1f2328; --pz-muted:#59636e; --pz-accent:#0969da; --pz-bad:#d1242f; --pz-on-bad:#ffffff;
+  --pz-radius:14px; --pz-shadow:0 1px 2px rgb(31 35 40 / .06), 0 8px 24px -12px rgb(31 35 40 / .18);
+}
+@media (prefers-color-scheme:dark){
+  :where(:root){
+    --pz-bg:#0d1117; --pz-surface:#151b23; --pz-sunken:#212830; --pz-line:#3d444d;
+    --pz-fg:#f0f6fc; --pz-muted:#9198a1; --pz-accent:#4493f8; --pz-bad:#f85149; --pz-on-bad:#0d1117;
+    --pz-shadow:0 8px 24px -12px rgb(0 0 0 / .7);
+  }
+}
+/* 12 columnas; cada fila mide lo mismo que una columna (--pz-col la pone fit()) */
+.pz{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-rows:var(--pz-col,60px);gap:16px;align-items:stretch}
+.pz>.pz-item{position:relative;margin:0;display:flex;flex-direction:column;min-height:0;min-width:0;padding:20px;background:var(--pz-surface);color:var(--pz-fg);border:1px solid var(--pz-line);border-radius:var(--pz-radius);box-shadow:var(--pz-shadow);transition:box-shadow .2s,outline-color .2s}
+.pz>.pz-item[hidden]{display:none}
+.pz>.pz-item>.pz-body{flex:1;min-height:0;overflow:auto}
+.pz>.pz-item.auto>.pz-body{flex:none;overflow:visible}
+.pz-sub{color:var(--pz-muted);font-size:12.5px;margin:2px 0 12px}
+
+/* Modo edición: cuadros redondeados de fondo (máscara SVG que toma el color del tema) y espacio abajo para soltar al final */
+@media (min-width:761px){
+  .pz.editing{position:relative;padding-bottom:var(--pz-step,76px)}
+  .pz.editing::before{content:"";position:absolute;inset:0;pointer-events:none;background:color-mix(in srgb,var(--pz-accent) 11%,transparent);
+    -webkit-mask:var(--pz-mask) 0 0/var(--pz-step) var(--pz-step) repeat;mask:var(--pz-mask) 0 0/var(--pz-step) var(--pz-step) repeat}
+}
+html:has(.pz.editing){overflow-anchor:none}   /* el navegador no corrige el scroll mientras los widgets se reacomodan */
+.pz .pz-tools,.pz .pz-rz{display:none}
+.pz.editing>.pz-item :is(h2,h3):first-of-type{padding-right:72px}
+.pz.editing .pz-tools{display:flex;position:absolute;top:10px;right:10px;gap:4px;z-index:3}
+.pz.editing .pz-rz{display:block;position:absolute;right:3px;bottom:3px;width:20px;height:20px;cursor:nwse-resize;touch-action:none;z-index:3;border-radius:0 0 11px 0;
+  background:linear-gradient(135deg,transparent 52%,var(--pz-muted) 52% 60%,transparent 60% 70%,var(--pz-muted) 70% 78%,transparent 78%)}
+.pz.editing .pz-rz:hover{background-color:var(--pz-sunken)}
+.pz.editing>.pz-item{cursor:grab;outline:2px dashed color-mix(in srgb,var(--pz-accent) 35%,transparent);outline-offset:-2px;touch-action:none;user-select:none}
+.pz.editing>.pz-item:hover{box-shadow:0 10px 28px rgba(0,46,96,.12)}
+.pz.editing .pz-body{pointer-events:none}
+.pz>.pz-item.lifted{cursor:grabbing;z-index:5;box-shadow:0 22px 48px rgba(0,46,96,.22);outline-color:var(--pz-accent);transition:none}
+.pz>.pz-item.resizing{z-index:4;outline-color:var(--pz-accent)}
+.pz>.pz-item.dropping{outline:2px dashed var(--pz-accent);outline-offset:3px}
+.pz>.pz-slot{pointer-events:none;border:2px dashed var(--pz-accent);border-radius:var(--pz-radius);background:color-mix(in srgb,var(--pz-accent) 16%,transparent)}
+.pz-btn{width:28px;height:28px;border-radius:8px;border:1px solid var(--pz-line);background:var(--pz-surface);color:var(--pz-muted);font:900 14px/1 system-ui,sans-serif;cursor:pointer;display:grid;place-items:center;padding:0;transition:color .15s,border-color .15s,transform .1s}
+.pz-btn:hover{color:var(--pz-fg);border-color:var(--pz-accent)}.pz-btn:active{transform:scale(.92)}
+.pz-btn:focus-visible{outline:2px solid var(--pz-accent);outline-offset:2px}
+.pz-grip{cursor:grab}.pz-hide:hover{color:var(--pz-bad);border-color:var(--pz-bad)}
+@media (max-width:760px){.pz.editing .pz-rz{display:none}}
+
+/* Bandeja "Widgets": panel a la derecha sobre la página (la parrilla no cambia de ancho). Se contrae a una pestaña y al arrastrar
+   un widget se contrae sola; abajo aparece la zona para quitar */
+.pz-tray{position:fixed;top:0;right:0;bottom:0;z-index:40;width:min(340px,100vw);display:flex;flex-direction:column;background:var(--pz-surface);color:var(--pz-fg);border-left:1px solid var(--pz-line);box-shadow:-18px 0 44px rgba(0,30,70,.14);
+  transition:translate .28s cubic-bezier(.2,.8,.2,1),box-shadow .2s,opacity .2s,display .28s;transition-behavior:allow-discrete}
+.pz-tray[hidden]{display:none;translate:100% 0}
+@starting-style{.pz-tray{translate:100% 0}}
+.pz-tray:is(.pz-min,.pz-auto){translate:100% 0;box-shadow:none}
+.pz-tray-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:16px 18px 14px;border-bottom:1px solid var(--pz-line)}
+.pz-tray-head b{display:block;font-weight:900;font-size:18px}
+.pz-tray-head p{margin:4px 0 0;font-size:12.5px;color:var(--pz-muted);line-height:1.45}
+.pz-x{all:unset;cursor:pointer;font-size:20px;line-height:1;color:var(--pz-muted);padding:2px 6px;border-radius:6px}.pz-x:hover{background:var(--pz-sunken);color:var(--pz-fg)}
+.pz-x:focus-visible{outline:2px solid var(--pz-accent)}
+.pz-list{flex:1;overflow:auto;padding:12px;display:grid;gap:8px;align-content:start}
+.pz-lbl{font-weight:800;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--pz-muted);padding:4px 4px 0}
+.pz-chip{all:unset;box-sizing:border-box;display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid var(--pz-line);border-radius:12px;background:var(--pz-bg);cursor:pointer;user-select:none;-webkit-user-select:none;transition:border-color .15s,background-color .15s,transform .15s}
+.pz-chip:hover{border-color:var(--pz-accent);background:var(--pz-surface);transform:translateY(-1px)}.pz-chip:active{transform:scale(.98)}
+.pz-chip:focus-visible{outline:2px solid var(--pz-accent);outline-offset:2px}
+.pz-chip-ico{flex:none;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb,var(--pz-accent) 14%,transparent);color:var(--pz-accent);font-weight:900;font-size:18px}
+.pz-chip b{display:block;font-weight:800;font-size:14px}.pz-chip small{display:block;font-size:12px;color:var(--pz-muted);margin-top:2px;line-height:1.4}
+.pz-ghost{position:fixed;left:0;top:0;z-index:80;pointer-events:none;transition:none;background:var(--pz-surface);border-color:var(--pz-accent);box-shadow:0 18px 40px rgba(0,30,70,.25);opacity:.95}
+.pz-empty{padding:18px 8px;text-align:center;color:var(--pz-muted);font-size:13px}
+.pz-tray-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 18px;border-top:1px solid var(--pz-line)}
+.pz-tab{all:unset;box-sizing:border-box;position:absolute;right:100%;top:50%;translate:0 -50%;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 9px;border:1px solid var(--pz-line);border-right:0;border-radius:12px 0 0 12px;background:var(--pz-surface);color:var(--pz-fg);font-weight:700;font-size:12.5px;box-shadow:-8px 6px 24px rgba(0,30,70,.14);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .2s,background-color .15s}
+.pz-tab span{writing-mode:vertical-rl;rotate:180deg}
+.pz-tab:hover{background:var(--pz-sunken)}.pz-tab:focus-visible{outline:2px solid var(--pz-accent)}
+.pz-tray.pz-min:not(.pz-auto) .pz-tab{opacity:1;pointer-events:auto}
+.pz-trash svg{width:20px;height:20px}
+.pz-trash{position:fixed;left:50%;bottom:28px;z-index:85;translate:-50% 0;display:flex;align-items:center;gap:10px;padding:14px 24px;border-radius:999px;border:2px dashed var(--pz-bad);background:var(--pz-surface);color:var(--pz-bad);font-weight:700;font-size:14px;box-shadow:0 14px 36px rgba(0,30,70,.2);pointer-events:none;
+  transition:opacity .2s ease-out,translate .25s cubic-bezier(.2,.8,.2,1),scale .15s,background-color .15s,color .15s,display .25s;transition-behavior:allow-discrete}
+.pz-trash.on{background:var(--pz-bad);color:var(--pz-on-bad);border-style:solid;scale:1.06}
+.pz-trash[hidden]{display:none;opacity:0;translate:-50% 16px}
+@starting-style{.pz-trash{opacity:0;translate:-50% 16px}}
+@media (prefers-reduced-motion:no-preference){.pz>.pz-slot{animation:pz-in .14s ease-out}}
+@keyframes pz-in{from{opacity:0;transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){.pz-tray,.pz-trash,.pz-tab,.pz>.pz-item{transition:none}}

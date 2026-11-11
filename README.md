@@ -8,6 +8,8 @@ Skills propias para Claude Code, publicadas como marketplace de plugins.
 | `organigrama` | Organigramas interactivos sin dependencias: por jefatura directa, de equipos anidados (áreas y transversales) e interno por equipo. Marca de agua, zoom, buscador, arrastre, pantalla completa y descarga PNG/PDF de todo o de una parte (descendente, ascendente, con pares). Modelo opcional Postgres/Supabase. Ejemplo en [`plugins/organigrama/examples/demo/`](plugins/organigrama/examples/demo/). |
 | `consola-multicuenta` | Estructura de consola multicuenta al estilo del dashboard de Cloudflare, sin dependencias: página para elegir cuenta, selector de cuenta en el sidebar, grupos desplegables, riel de íconos con vista rápida al pasar el cursor, menú que se desliza al entrar a un recurso, recientes, búsqueda Ctrl K y menú de usuario. Ejemplo en [`plugins/consola-multicuenta/examples/demo/`](plugins/consola-multicuenta/examples/demo/). |
 | `accesibilidad` | Accesibilidad de apps web de la auditoría a la verificación: Playwright + axe en las 12 combinaciones de tema (daltonismo, alto contraste), skip link, título y foco al cambiar de ruta en SPAs, foco con el contraste de Windows, reflow a 320 px con letra al 150 %, página Accesibilidad estilo GitHub, CSS base y conversión de px a rem. Fallos reales y su arreglo en [`plugins/accesibilidad/references/patrones.md`](plugins/accesibilidad/references/patrones.md). |
+| `parrilla-widgets` | Parrilla de widgets personalizable sin dependencias: 12 columnas con filas cuadradas, mover arrastrando con animación FLIP y espacio de destino, estirar desde la esquina (doble clic: alto automático), teclado, bandeja de widgets para agregar con clic o arrastre, zona para quitar, autodesplazamiento y una columna en el celular. Ejemplo en [`plugins/parrilla-widgets/examples/demo/`](plugins/parrilla-widgets/examples/demo/). |
+| `ancho-ajustable` | Columnas de tabla con ancho ajustable: arrastrar el borde del encabezado, doble clic para ajustar al contenido (texto, chips e íconos), cursor fijo y línea de acento, y anchos guardados. Script sin dependencias para cualquier `<table>` y receta para TanStack Table. Ejemplo en [`plugins/ancho-ajustable/examples/demo/`](plugins/ancho-ajustable/examples/demo/). |
 
 ## Estilo compartido
 
@@ -30,6 +32,8 @@ claude plugin install vistas-de-datos@claude-tools
 claude plugin install organigrama@claude-tools
 claude plugin install consola-multicuenta@claude-tools
 claude plugin install accesibilidad@claude-tools
+claude plugin install parrilla-widgets@claude-tools
+claude plugin install ancho-ajustable@claude-tools
 ```
 
 Para un proyecto concreto, agregar `--scope project` (queda en su `.claude/settings.json`).

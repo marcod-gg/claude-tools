@@ -1,0 +1,3 @@
+/* Alias --aa-* → --dt-* para usar el ancho ajustable con el estilo compartido (default-theme, tokens --dt-*).
+   Cargar después de default-theme/theme-tokens.css (y del estilo opcional, si hay) y de ancho-ajustable.css. */
+:root, .dt-thp { --aa-line: var(--dt-border); --aa-accent: var(--dt-brand); }

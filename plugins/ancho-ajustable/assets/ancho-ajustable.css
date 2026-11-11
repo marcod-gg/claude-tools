@@ -1,0 +1,20 @@
+/* Ancho ajustable (skill ancho-ajustable de claude-tools). Solo tokens --aa-*: el sitio los apunta a su marca en su :root.
+   Valores por defecto neutros en :where(:root) (especificidad cero). */
+:where(:root){ --aa-line:#d1d9e0; --aa-accent:#0969da; }
+@media (prefers-color-scheme:dark){ :where(:root){ --aa-line:#3d444d; --aa-accent:#4493f8; } }
+
+/* La tabla toma la suma de los anchos de sus columnas: arrastrar una no aprieta a las demás. Envolverla en un contenedor con overflow-x:auto. */
+.aa-table{table-layout:fixed;border-collapse:separate;border-spacing:0}
+.aa-table th{box-sizing:border-box;position:relative}
+.aa-table :is(th,td){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aa-table:not(.aa-resizing) th{transition:width .16s cubic-bezier(.2,.8,.2,1)}   /* el doble clic se anima; el arrastre sigue al mouse */
+html.aa-col-resizing, html.aa-col-resizing *{cursor:col-resize !important;user-select:none}   /* el cursor no cambia aunque el mouse salga de la franja */
+
+/* Franja de 12 px centrada en el borde; muestra una línea fina al pasar sobre la cabecera y una de 3 px sobre la franja */
+.aa-resizer{position:absolute;top:0;right:-6px;height:100%;width:12px;cursor:col-resize;touch-action:none;user-select:none;z-index:2;border-radius:3px;transition:background-color .15s}
+.aa-table th:last-child .aa-resizer{right:0}
+.aa-resizer::after{content:"";position:absolute;top:25%;left:50%;translate:-50% 0;height:50%;width:1px;border-radius:2px;background:transparent;transition:background-color .15s,width .15s,top .15s,height .15s}
+.aa-table thead:hover .aa-resizer::after{background:var(--aa-line)}
+.aa-resizer:hover,.aa-resizer.is-resizing{background:color-mix(in srgb,var(--aa-accent) 18%,transparent)}
+.aa-table thead .aa-resizer:hover::after,.aa-table thead .aa-resizer.is-resizing::after{top:0;height:100%;width:3px;background:var(--aa-accent)}
+@media (prefers-reduced-motion:reduce){.aa-table th,.aa-resizer,.aa-resizer::after{transition:none !important}}
